@@ -2,6 +2,7 @@
 export interface ModalityState {
   // Identity
   moduleName: string;
+  moduleCode: string;
   stage: string;
   credits: number;
   hours: number;
@@ -49,10 +50,21 @@ export interface ModalityState {
     international: boolean;
     stage1Transition: boolean;
   };
+
+  // B5. Staff Profile (New)
+  staffProfile: {
+    digitalConfidence: "Low" | "Moderate" | "High";
+    onlineExperience: "None" | "Some" | "Substantial";
+    accessDevice: boolean;
+    accessHyFlexRoom: boolean;
+    accessDigitalTools: boolean;
+    workload: "1-2" | "3+" | "HeavyPractical";
+  };
 }
 
 export const initialModalityState: ModalityState = {
   moduleName: "",
+  moduleCode: "",
   stage: "1",
   credits: 5,
   hours: 4,
@@ -91,6 +103,14 @@ export const initialModalityState: ModalityState = {
     working: false,
     international: false,
     stage1Transition: false,
+  },
+  staffProfile: {
+    digitalConfidence: "Moderate",
+    onlineExperience: "Some",
+    accessDevice: true,
+    accessHyFlexRoom: false,
+    accessDigitalTools: true,
+    workload: "1-2",
   },
 };
 
@@ -165,10 +185,9 @@ export function scoreModality(state: ModalityState): ScoreResult {
   if (state.resources.equipment) { fe.inPerson += 40; fe.online -= 40; fe.hyflex -= 20; }
   if (state.resources.remoteFriendly) { fe.online += 40; fe.blended += 20; fe.hyflex += 20; }
   
-  // HyFlex Feasibility Constraints
-  // "HyFlex receives 0 or low scores if: Staff comfort is unchecked"
+  // HyFlex Feasibility Constraints (Original)
   if (!state.resources.staffComfort) {
-    fe.hyflex = 0; // Hard penalty
+    fe.hyflex = 0; 
   }
 
   // HyFlex penalty if Lab/Studio required but not simulation/remote friendly
@@ -176,6 +195,40 @@ export function scoreModality(state: ModalityState): ScoreResult {
       !state.resources.remoteFriendly && !state.resources.simulation) {
       fe.hyflex = Math.min(fe.hyflex, 20);
       fe.online = Math.min(fe.online, 10);
+  }
+
+  // --- B5 Staff Profile Adjustments (New) ---
+  // Digital Confidence
+  if (state.staffProfile.digitalConfidence === "Low") {
+    fe.online -= 10;
+    fe.hyflex -= 15;
+  } else if (state.staffProfile.digitalConfidence === "High") {
+    fe.online += 5;
+    fe.hyflex += 5;
+  }
+
+  // Online Experience
+  if (state.staffProfile.onlineExperience === "None") {
+    fe.online -= 10;
+    fe.hyflex -= 15;
+  } else if (state.staffProfile.onlineExperience === "Substantial") {
+    fe.online += 10;
+    fe.hyflex += 10;
+  }
+
+  // Access to Tech
+  if (!state.staffProfile.accessHyFlexRoom) {
+    fe.hyflex = Math.min(fe.hyflex, 30); // Cap HyFlex if no room
+  }
+  if (!state.staffProfile.accessDigitalTools) {
+    fe.online -= 20;
+    fe.hyflex -= 10;
+  }
+
+  // Workload Complexity
+  if (state.staffProfile.workload === "3+" || state.staffProfile.workload === "HeavyPractical") {
+    fe.hyflex -= 10; // Complex workload makes HyFlex harder
+    fe.online -= 5;
   }
 
 
@@ -196,10 +249,8 @@ export function scoreModality(state: ModalityState): ScoreResult {
   let score_hf = calculateTotal('hyflex');
 
   // Global HyFlex Constraints (Post-calculation overrides)
-  // "HyFlex receives 0 or low scores if: Staff comfort is unchecked"
   if (!state.resources.staffComfort) score_hf = Math.min(score_hf, 20);
   
-  // "Digital access risk is high" -> (lowDigitalAccessRisk is false)
   if (!state.profile.lowDigitalAccessRisk) {
      score_on = Math.min(score_on, 40);
      score_hf = Math.min(score_hf, 40); 
@@ -223,6 +274,7 @@ export function scoreModality(state: ModalityState): ScoreResult {
   if (state.profile.stage1Transition && score_on > 60) risks.push("High Online risk for Stage 1 students");
   if (!state.profile.lowDigitalAccessRisk && (score_on > 50 || score_hf > 50)) risks.push("Digital Access Equity Risk");
   if (!state.resources.staffComfort && score_hf > 30) risks.push("Staff not comfortable with HyFlex");
+  if (!state.staffProfile.accessHyFlexRoom && score_hf > 40) risks.push("No dedicated HyFlex room available");
 
   // Recommendation
   const scores = { "In-Person": score_ip, "Blended": score_bl, "Online": score_on, "HyFlex": score_hf };

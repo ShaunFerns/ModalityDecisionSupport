@@ -20,15 +20,27 @@ export function ModuleIdentityCard({ state, onChange }: Props) {
         </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-4 pt-4">
-        <div className="grid gap-2">
-          <Label htmlFor="moduleName">Module Name</Label>
-          <Input 
-            id="moduleName" 
-            value={state.moduleName} 
-            onChange={(e) => onChange({ moduleName: e.target.value })} 
-            placeholder="e.g. Advanced Data Structures"
-            className="font-medium"
-          />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="moduleCode">Module Code</Label>
+            <Input 
+              id="moduleCode" 
+              value={state.moduleCode || ""} 
+              onChange={(e) => onChange({ moduleCode: e.target.value })} 
+              placeholder="e.g. CMPU1010"
+              className="font-medium uppercase"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="moduleName">Module Name</Label>
+            <Input 
+              id="moduleName" 
+              value={state.moduleName} 
+              onChange={(e) => onChange({ moduleName: e.target.value })} 
+              placeholder="e.g. Advanced Data Structures"
+              className="font-medium"
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
@@ -86,10 +98,12 @@ export function ModuleIdentityCard({ state, onChange }: Props) {
               <SelectValue placeholder="Select mix" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Standard">Standard Undergraduate</SelectItem>
+              <SelectItem value="Standard UG">Standard Undergraduate</SelectItem>
               <SelectItem value="Mature">Mature / Career Changers</SelectItem>
               <SelectItem value="International">International Cohort</SelectItem>
               <SelectItem value="Apprentice">Apprenticeship</SelectItem>
+              <SelectItem value="Part-time">Part-time</SelectItem>
+              <SelectItem value="Work-based">Work-based</SelectItem>
             </SelectContent>
           </Select>
         </div>

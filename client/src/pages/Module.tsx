@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { ModalityState, initialModalityState, scoreModality, ScoreResult } from "@/lib/scoring";
+import { ModuleIdentityCard } from "@/components/modality/ModuleIdentityCard";
 import { Radar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -18,7 +18,14 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Download, Save, AlertTriangle, CheckCircle, Info } from "lucide-react";
+import { Download, Save, AlertTriangle, CheckCircle, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  Tooltip as UITooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 ChartJS.register(
   RadialLinearScale,
@@ -32,6 +39,7 @@ ChartJS.register(
 export default function Module() {
   const [state, setState] = useState<ModalityState>(initialModalityState);
   const [scores, setScores] = useState<ScoreResult>(scoreModality(initialModalityState));
+  const [transparencyOpen, setTransparencyOpen] = useState(false);
   
   const handleStateChange = (updates: Partial<ModalityState>) => {
     const newState = { ...state, ...updates };
@@ -53,6 +61,24 @@ export default function Module() {
 
   const updateProfile = (key: keyof ModalityState['profile'], val: boolean) => {
     handleStateChange({ profile: { ...state.profile, [key]: val } });
+  };
+
+  const updateStaffProfile = (key: keyof ModalityState['staffProfile'], val: any) => {
+    handleStateChange({ staffProfile: { ...state.staffProfile, [key]: val } });
+  };
+
+  const handleExportJSON = () => {
+    const data = {
+      state,
+      scores,
+      generatedAt: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `MDST-${state.moduleCode || 'module'}.json`;
+    a.click();
   };
 
   // Radar Data
@@ -91,11 +117,9 @@ export default function Module() {
   };
 
   const getAssessmentColor = (type: string, modality: string) => {
-     // Simple heuristic for heatmap
      const weight = state.assessments[type as keyof typeof state.assessments];
      if (weight === "No") return "bg-gray-100";
      
-     // This logic mirrors the scoring logic vaguely for visual feedback
      if (modality === "in-person") {
         if (type === "exam" || type === "lab") return "bg-green-500 text-white";
      }
@@ -115,56 +139,7 @@ export default function Module() {
           
           {/* Panel A: Module Identity */}
           <section>
-            <h2 className="text-lg font-bold text-primary uppercase tracking-wide mb-4 border-l-4 border-primary pl-3">Panel A: Module Identity</h2>
-            <Card>
-              <CardContent className="grid gap-4 pt-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="moduleName">Module Name</Label>
-                  <Input value={state.moduleName} onChange={(e) => handleStateChange({ moduleName: e.target.value })} placeholder="Module Name" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label>Stage</Label>
-                    <Select value={state.stage} onValueChange={(val) => handleStateChange({ stage: val })}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="1">Stage 1</SelectItem>
-                        <SelectItem value="2">Stage 2</SelectItem>
-                        <SelectItem value="3">Stage 3</SelectItem>
-                        <SelectItem value="4">Stage 4</SelectItem>
-                        <SelectItem value="M">Masters</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                   <div className="grid gap-2">
-                    <Label>Credits (ECTS)</Label>
-                    <Input type="number" value={state.credits} onChange={(e) => handleStateChange({ credits: Number(e.target.value) })} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label>Weekly Hours</Label>
-                    <Input type="number" value={state.hours} onChange={(e) => handleStateChange({ hours: Number(e.target.value) })} />
-                  </div>
-                   <div className="grid gap-2">
-                    <Label>Students</Label>
-                    <Input type="number" value={state.students} onChange={(e) => handleStateChange({ students: Number(e.target.value) })} />
-                  </div>
-                </div>
-                <div className="grid gap-2">
-                    <Label>Typical Learner Mix</Label>
-                    <Select value={state.learnerMix} onValueChange={(val) => handleStateChange({ learnerMix: val })}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Standard UG">Standard UG</SelectItem>
-                        <SelectItem value="Part-time">Part-time</SelectItem>
-                        <SelectItem value="Work-based">Work-based</SelectItem>
-                        <SelectItem value="International">International</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-              </CardContent>
-            </Card>
+            <ModuleIdentityCard state={state} onChange={handleStateChange} />
           </section>
 
           {/* Panel B: Drivers */}
@@ -179,7 +154,7 @@ export default function Module() {
                     {Object.entries(state.activities).map(([key, val]) => (
                       <div key={key} className="flex items-center space-x-2">
                         <Checkbox id={`act-${key}`} checked={val} onCheckedChange={(c) => updateActivity(key as any, c as boolean)} />
-                        <Label htmlFor={`act-${key}`} className="capitalize text-sm font-normal">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
+                        <Label htmlFor={`act-${key}`} className="capitalize text-sm font-normal cursor-pointer">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
                       </div>
                     ))}
                   </CardContent>
@@ -212,14 +187,14 @@ export default function Module() {
                      {Object.entries(state.resources).map(([key, val]) => (
                       <div key={key} className="flex items-center space-x-2">
                         {key === 'staffComfort' ? (
-                           <div className="col-span-2 flex items-center justify-between w-full bg-muted/30 p-2 rounded">
-                             <Label htmlFor={`res-${key}`} className="font-medium">Staff Comfortable with HyFlex?</Label>
+                           <div className="col-span-2 flex items-center justify-between w-full bg-muted/30 p-2 rounded mt-2">
+                             <Label htmlFor={`res-${key}`} className="font-medium cursor-pointer">Staff Comfortable with HyFlex?</Label>
                              <Switch id={`res-${key}`} checked={val} onCheckedChange={(c) => updateResource(key as any, c)} />
                            </div>
                         ) : (
                           <>
                             <Checkbox id={`res-${key}`} checked={val} onCheckedChange={(c) => updateResource(key as any, c as boolean)} />
-                            <Label htmlFor={`res-${key}`} className="capitalize text-sm font-normal">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
+                            <Label htmlFor={`res-${key}`} className="capitalize text-sm font-normal cursor-pointer">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
                           </>
                         )}
                       </div>
@@ -234,9 +209,86 @@ export default function Module() {
                      {Object.entries(state.profile).map(([key, val]) => (
                       <div key={key} className="flex items-center space-x-2">
                         <Checkbox id={`prof-${key}`} checked={val} onCheckedChange={(c) => updateProfile(key as any, c as boolean)} />
-                        <Label htmlFor={`prof-${key}`} className="capitalize text-sm font-normal">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
+                        <Label htmlFor={`prof-${key}`} className="capitalize text-sm font-normal cursor-pointer">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
                       </div>
                     ))}
+                  </CardContent>
+                </Card>
+
+                {/* B5: Staff Profile (NEW) */}
+                <Card className="border-l-4 border-l-secondary">
+                  <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                    <CardTitle className="text-sm font-bold flex items-center gap-2">
+                      B5. Staff Profile <span className="text-xs font-normal text-muted-foreground bg-gray-100 px-2 py-0.5 rounded-full">Optional</span>
+                    </CardTitle>
+                    <TooltipProvider>
+                      <UITooltip>
+                        <TooltipTrigger>
+                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-xs">
+                          <p>These items help assess feasibility. They do not evaluate staff performance or influence workload planning.</p>
+                        </TooltipContent>
+                      </UITooltip>
+                    </TooltipProvider>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="digitalConfidence" className="text-xs font-medium">Digital Confidence for Teaching</Label>
+                        <Select value={state.staffProfile.digitalConfidence} onValueChange={(v) => updateStaffProfile('digitalConfidence', v)}>
+                          <SelectTrigger id="digitalConfidence"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Low">Low</SelectItem>
+                            <SelectItem value="Moderate">Moderate</SelectItem>
+                            <SelectItem value="High">High</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="onlineExperience" className="text-xs font-medium">Online Teaching Experience</Label>
+                        <Select value={state.staffProfile.onlineExperience} onValueChange={(v) => updateStaffProfile('onlineExperience', v)}>
+                          <SelectTrigger id="onlineExperience"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="None">None</SelectItem>
+                            <SelectItem value="Some">Some</SelectItem>
+                            <SelectItem value="Substantial">Substantial</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-xs font-medium">Access to Suitable Technology / Spaces</Label>
+                      <div className="grid grid-cols-1 gap-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="accessDevice" checked={state.staffProfile.accessDevice} onCheckedChange={(c) => updateStaffProfile('accessDevice', c)} />
+                          <Label htmlFor="accessDevice" className="text-sm font-normal cursor-pointer">Reliable personal device + microphone</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="accessHyFlexRoom" checked={state.staffProfile.accessHyFlexRoom} onCheckedChange={(c) => updateStaffProfile('accessHyFlexRoom', c)} />
+                          <Label htmlFor="accessHyFlexRoom" className="text-sm font-normal cursor-pointer">Access to a HyFlex-equipped room</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="accessDigitalTools" checked={state.staffProfile.accessDigitalTools} onCheckedChange={(c) => updateStaffProfile('accessDigitalTools', c)} />
+                          <Label htmlFor="accessDigitalTools" className="text-sm font-normal cursor-pointer">Access to digital tools (e.g. VLE, breakout features)</Label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="workload" className="text-xs font-medium">Workload Complexity</Label>
+                        <Select value={state.staffProfile.workload} onValueChange={(v) => updateStaffProfile('workload', v)}>
+                          <SelectTrigger id="workload"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="1-2">Teaching 1–2 modules</SelectItem>
+                            <SelectItem value="3+">Teaching 3+ modules</SelectItem>
+                            <SelectItem value="HeavyPractical">Heavy lab/studio/practical load</SelectItem>
+                          </SelectContent>
+                        </Select>
+                    </div>
+
                   </CardContent>
                 </Card>
 
@@ -306,8 +358,74 @@ export default function Module() {
                     <Radar data={radarData} options={{ maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 100 } } }} />
                  </CardContent>
                </Card>
+
+               {/* Assessment Matrix Heatmap */}
+               <Card className="shadow-sm">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-bold uppercase text-muted-foreground">
+                    Assessment–Modality Matrix
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-5 gap-1 text-xs text-center">
+                    <div className="font-bold text-left pl-2">Type</div>
+                    <div className="font-bold">IP</div>
+                    <div className="font-bold">Blend</div>
+                    <div className="font-bold">Online</div>
+                    <div className="font-bold">HyFlex</div>
+
+                    {Object.keys(state.assessments).map((key) => (
+                      <React.Fragment key={key}>
+                        <div className="text-left pl-2 capitalize py-1 truncate" title={key}>{key}</div>
+                        <div className={`py-1 rounded-sm ${getAssessmentColor(key, 'in-person')}`}></div>
+                        <div className={`py-1 rounded-sm ${getAssessmentColor(key, 'blended')}`}></div>
+                        <div className={`py-1 rounded-sm ${getAssessmentColor(key, 'online')}`}></div>
+                        <div className={`py-1 rounded-sm ${getAssessmentColor(key, 'hyflex')}`}></div>
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
                
              </div>
+          </section>
+
+          {/* Transparency Panel */}
+          <section>
+            <Collapsible open={transparencyOpen} onOpenChange={setTransparencyOpen} className="border rounded-md bg-white shadow-sm">
+              <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-sm font-medium hover:bg-gray-50">
+                <span>Inputs used for recommendation</span>
+                {transparencyOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </CollapsibleTrigger>
+              <CollapsibleContent className="p-4 pt-0 text-xs text-muted-foreground space-y-2">
+                <div className="grid grid-cols-2 gap-4 border-t pt-2">
+                  <div>
+                    <strong className="block text-gray-700">Identity</strong>
+                    {state.moduleCode} {state.moduleName} ({state.credits} ECTS)
+                  </div>
+                  <div>
+                    <strong className="block text-gray-700">Profile</strong>
+                    {state.learnerMix}, {state.stage}
+                  </div>
+                </div>
+                <div>
+                  <strong className="block text-gray-700">Activities</strong>
+                  {Object.entries(state.activities).filter(([_, v]) => v).map(([k]) => k).join(", ") || "None"}
+                </div>
+                <div>
+                  <strong className="block text-gray-700">Assessments</strong>
+                  {Object.entries(state.assessments).filter(([_, v]) => v !== "No").map(([k, v]) => `${k} (${v})`).join(", ") || "None"}
+                </div>
+                <div>
+                  <strong className="block text-gray-700">Constraints</strong>
+                  {Object.entries(state.resources).filter(([_, v]) => v === true).map(([k]) => k).join(", ") || "None"}
+                </div>
+                <div>
+                  <strong className="block text-gray-700">Staff Profile</strong>
+                  Conf: {state.staffProfile.digitalConfidence}, Exp: {state.staffProfile.onlineExperience}, Work: {state.staffProfile.workload}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </section>
 
         </div>
@@ -322,7 +440,7 @@ export default function Module() {
              <p className="text-slate-400 text-sm">Review your evidence-based recommendation and export your findings.</p>
            </div>
            <div className="flex gap-3">
-              <Button variant="secondary" className="gap-2"><Save className="h-4 w-4" /> Save JSON</Button>
+              <Button variant="secondary" className="gap-2" onClick={handleExportJSON}><Save className="h-4 w-4" /> Save JSON</Button>
               <Button className="gap-2 bg-white text-primary hover:bg-gray-100"><Download className="h-4 w-4" /> Export PDF Report</Button>
            </div>
         </div>
