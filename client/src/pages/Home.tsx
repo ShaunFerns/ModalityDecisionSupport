@@ -42,31 +42,31 @@ export default function Home() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-20 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
-          {/* Card 1 */}
-          <Link href="/programme">
-            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 shadow-lg group cursor-pointer overflow-hidden">
-              <CardContent className="p-8">
-                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
-                  <LayoutDashboard className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">1. Review Programme</h3>
-                <p className="text-gray-500 leading-relaxed">
-                  View programme-level coherence and weekly load distributions to ensure balanced student workloads.
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
-
-          {/* Card 2 */}
+          {/* Card 1 (Swapped: Define Module) */}
           <Link href="/module">
             <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 shadow-lg group cursor-pointer overflow-hidden">
               <CardContent className="p-8">
                 <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
                   <FileText className="h-6 w-6 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">2. Define Module</h3>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">1. Define Module</h3>
                 <p className="text-gray-500 leading-relaxed">
                   Input module details, learning activities, and assessments to get an evidence-based modality recommendation.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          {/* Card 2 (Swapped: Review Programme) */}
+          <Link href="/programme">
+            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 shadow-lg group cursor-pointer overflow-hidden">
+              <CardContent className="p-8">
+                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
+                  <LayoutDashboard className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">2. Review Programme</h3>
+                <p className="text-gray-500 leading-relaxed">
+                  View programme-level coherence and weekly load distributions to ensure balanced student workloads.
                 </p>
               </CardContent>
             </Card>
