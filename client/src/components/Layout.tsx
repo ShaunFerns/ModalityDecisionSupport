@@ -70,7 +70,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <footer className="bg-white border-t border-border">
         <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Modality Decision Support Tool.
+            &copy; 2025 Curriculum Insight Suite. All rights reserved.
           </p>
           <div className="text-sm text-muted-foreground flex gap-4">
              <span>Evidence-based decision support</span>
