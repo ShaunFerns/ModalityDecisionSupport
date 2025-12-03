@@ -33,15 +33,6 @@ export default function Module() {
   const [state, setState] = useState<ModalityState>(initialModalityState);
   const [scores, setScores] = useState<ScoreResult>(scoreModality(initialModalityState));
   
-  // Micro Pattern Planner State (Panel D)
-  const [microState, setMicroState] = useState({
-    tutorialCapacity: 20,
-    labCapacity: 16,
-    lectureMode: "in-person",
-    tutorialMode: "in-person",
-    labMode: "in-person"
-  });
-
   const handleStateChange = (updates: Partial<ModalityState>) => {
     const newState = { ...state, ...updates };
     setState(newState);
@@ -319,85 +310,6 @@ export default function Module() {
              </div>
           </section>
 
-          {/* Panel D: Micro Pattern Planner */}
-          <section>
-            <h2 className="text-lg font-bold text-primary uppercase tracking-wide mb-4 border-l-4 border-primary pl-3 flex items-center gap-2">
-              Panel D: Micro Pattern Planner
-              <span className="text-xs font-normal bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">Optional</span>
-            </h2>
-            
-            <Card className="bg-muted/10 border-dashed border-2">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  Use this to explore your weekly lecture/lab/tutorial structure. 
-                  It does not change the recommended modality scores.
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                   <div className="space-y-1">
-                     <Label className="text-xs">Tutorial Capacity</Label>
-                     <Input type="number" value={microState.tutorialCapacity} onChange={(e) => setMicroState({...microState, tutorialCapacity: Number(e.target.value)})} className="h-8" />
-                     <div className="text-xs text-muted-foreground">Groups: {Math.ceil(state.students / microState.tutorialCapacity)}</div>
-                   </div>
-                   <div className="space-y-1">
-                     <Label className="text-xs">Lab Capacity</Label>
-                     <Input type="number" value={microState.labCapacity} onChange={(e) => setMicroState({...microState, labCapacity: Number(e.target.value)})} className="h-8" />
-                     <div className="text-xs text-muted-foreground">Groups: {Math.ceil(state.students / microState.labCapacity)}</div>
-                   </div>
-                </div>
-
-                <div className="space-y-3 border-t pt-3">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm">Lecture</Label>
-                    <div className="flex gap-1">
-                       {['in-person', 'online', 'hyflex'].map(m => (
-                         <button 
-                           key={m} 
-                           onClick={() => setMicroState({...microState, lectureMode: m})}
-                           className={`px-2 py-1 text-xs border rounded ${microState.lectureMode === m ? 'bg-primary text-primary-foreground' : 'bg-white'}`}
-                         >
-                           {m}
-                         </button>
-                       ))}
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm">Tutorials</Label>
-                    <div className="flex gap-1">
-                       {['in-person', 'online', 'hyflex'].map(m => (
-                         <button 
-                           key={m} 
-                           onClick={() => setMicroState({...microState, tutorialMode: m})}
-                           className={`px-2 py-1 text-xs border rounded ${microState.tutorialMode === m ? 'bg-primary text-primary-foreground' : 'bg-white'}`}
-                         >
-                           {m}
-                         </button>
-                       ))}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <Label className="text-sm">Labs</Label>
-                    <div className="flex gap-1">
-                       {['in-person', 'online', 'hyflex'].map(m => (
-                         <button 
-                           key={m} 
-                           disabled={(m === 'online' && state.resources.labRequired && !state.resources.simulation) || (m === 'hyflex' && !state.resources.staffComfort)}
-                           onClick={() => setMicroState({...microState, labMode: m})}
-                           className={`px-2 py-1 text-xs border rounded ${microState.labMode === m ? 'bg-primary text-primary-foreground' : 'bg-white'} disabled:opacity-30`}
-                         >
-                           {m}
-                         </button>
-                       ))}
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </section>
-        
         </div>
 
       </div>
