@@ -90,15 +90,14 @@ export default function Home() {
         </div>
       </div>
       
-      {/* Bottom Info Section */}
-      <div className="bg-white border-t py-12 mt-auto">
+      {/* Footer */}
+      <footer className="bg-white border-t border-border py-8 mt-auto">
          <div className="max-w-6xl mx-auto px-4 text-center">
-            <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
-               This tool is designed to support collegial discussion and design. There are no approvals or sign-offs required. 
-               Decisions are informed by learning design, assessment suitability, learner profile, and resource constraints.
+            <p className="text-sm text-muted-foreground">
+               &copy; 2025 Curriculum Insight Suite. All rights reserved.
             </p>
          </div>
-      </div>
+      </footer>
     </div>
   );
 }
