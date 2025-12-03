@@ -130,7 +130,13 @@ export default function Module() {
                 
                 {/* B1 */}
                 <Card>
-                  <CardHeader className="pb-2"><CardTitle className="text-sm font-bold">B1. Learning Activities</CardTitle></CardHeader>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-bold">B1. Learning Activities</CardTitle>
+                    <div className="text-xs text-muted-foreground mt-1 space-y-1">
+                      <p>Select the learning activities that are central to how students achieve the learning outcomes.</p>
+                      <p>Choose only those that represent the dominant teaching and learning approach in this module.</p>
+                    </div>
+                  </CardHeader>
                   <CardContent className="grid grid-cols-2 gap-2">
                     {Object.entries(state.activities).map(([key, val]) => (
                       <div key={key} className="flex items-center space-x-2">
@@ -143,7 +149,13 @@ export default function Module() {
 
                 {/* B2 */}
                 <Card>
-                  <CardHeader className="pb-2"><CardTitle className="text-sm font-bold">B2. Assessment Types</CardTitle></CardHeader>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-bold">B2. Assessment Types</CardTitle>
+                    <div className="text-xs text-muted-foreground mt-1 space-y-1">
+                      <p>Indicate the role of each assessment type in this module.</p>
+                      <p>Select Major only where the assessment is a significant or defining component of learner evidence.</p>
+                    </div>
+                  </CardHeader>
                   <CardContent className="grid grid-cols-1 gap-2">
                     {Object.entries(state.assessments).map(([key, val]) => (
                       <div key={key} className="flex items-center justify-between border-b pb-1 last:border-0">
@@ -163,7 +175,13 @@ export default function Module() {
 
                 {/* B3 */}
                 <Card>
-                  <CardHeader className="pb-2"><CardTitle className="text-sm font-bold">B3. Resources & Constraints</CardTitle></CardHeader>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-bold">B3. Resources & Constraints</CardTitle>
+                    <div className="text-xs text-muted-foreground mt-1 space-y-1">
+                      <p>Identify any resources or delivery constraints that shape how this module can be delivered.</p>
+                      <p>These help establish what is feasible for different modalities.</p>
+                    </div>
+                  </CardHeader>
                   <CardContent className="grid grid-cols-2 gap-2">
                      {Object.entries(state.resources).map(([key, val]) => (
                       <div key={key} className="flex items-center space-x-2">
@@ -177,7 +195,13 @@ export default function Module() {
 
                 {/* B4 */}
                 <Card>
-                  <CardHeader className="pb-2"><CardTitle className="text-sm font-bold">B4. Learner Profile & Equity</CardTitle></CardHeader>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-bold">B4. Learner Profile & Equity</CardTitle>
+                    <div className="text-xs text-muted-foreground mt-1 space-y-1">
+                      <p>Select the characteristics that best describe the typical learners taking this module.</p>
+                      <p>These factors help understand flexibility needs and equity considerations.</p>
+                    </div>
+                  </CardHeader>
                   <CardContent className="grid grid-cols-1 gap-2">
                      {Object.entries(state.profile).map(([key, val]) => (
                       <div key={key} className="flex items-center space-x-2">
@@ -190,11 +214,17 @@ export default function Module() {
 
                 {/* B5: Staff Profile (NEW) */}
                 <Card className="border-l-4 border-l-secondary">
-                  <CardHeader className="pb-2 flex flex-row items-center justify-between">
-                    <CardTitle className="text-sm font-bold flex items-center gap-2">
-                      B5. Staff Profile <span className="text-xs font-normal text-muted-foreground bg-gray-100 px-2 py-0.5 rounded-full">Optional</span>
-                    </CardTitle>
-                    {/* Removed HelpCircle/Tooltip here */}
+                  <CardHeader className="pb-2">
+                    <div className="flex flex-row items-center justify-between">
+                      <CardTitle className="text-sm font-bold flex items-center gap-2">
+                        B5. Staff Profile <span className="text-xs font-normal text-muted-foreground bg-gray-100 px-2 py-0.5 rounded-full">Optional</span>
+                      </CardTitle>
+                      {/* Removed HelpCircle/Tooltip here */}
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-1 space-y-1">
+                      <p>(Optional): Provide information about staff readiness and available teaching supports.</p>
+                      <p>These items influence feasibility, not quality or performance.</p>
+                    </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     
