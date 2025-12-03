@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, BookOpen, BarChart3, Home as HomeIcon, Layers } from "lucide-react";
+import { LayoutDashboard, BookOpen, BarChart3, Home as HomeIcon, Layers, FileText, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -8,9 +8,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
 
   const navItems = [
-    { href: "/", label: "Home", icon: HomeIcon },
-    { href: "/programme", label: "Programme", icon: LayoutDashboard },
+    { href: "/programme", label: "Programme", icon: Settings },
     { href: "/module", label: "Modules", icon: BookOpen },
+    { href: "/assessments", label: "Assessments", icon: FileText }, // Added Assessments placeholder
     { href: "/visualisations", label: "Visualisations", icon: BarChart3 },
   ];
 
@@ -22,7 +22,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex justify-between h-16 items-center">
             
             {/* Logo Area */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mr-8">
               <div className="bg-secondary/20 p-1.5 rounded-md">
                  <Layers className="h-6 w-6 text-secondary-foreground" />
               </div>
@@ -30,17 +30,32 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </div>
 
             {/* Desktop Nav */}
-            <div className="hidden md:flex items-center space-x-1">
+            <div className="hidden md:flex items-center space-x-6">
+              
+              {/* Home Button (Distinct Style) */}
+              <Link href="/">
+                <a className={cn(
+                  "inline-flex items-center px-4 py-2 rounded-md text-sm font-bold transition-all duration-200 shadow-sm",
+                  location === "/" 
+                    ? "bg-secondary text-white hover:bg-secondary/90" 
+                    : "bg-secondary text-white hover:bg-secondary/90" // Always button style for Home
+                )}>
+                  <LayoutDashboard className="w-4 h-4 mr-2" /> {/* Using Grid/Dashboard icon for Home button as per ref, or HomeIcon */}
+                  Home
+                </a>
+              </Link>
+
+              {/* Other Nav Items */}
               {navItems.map((item) => {
                  const isActive = location === item.href || (item.href !== "/" && location.startsWith(item.href));
                  return (
                   <Link key={item.href} href={item.href}>
                     <a
                       className={cn(
-                        "inline-flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                        "inline-flex items-center text-sm font-medium transition-all duration-200",
                         isActive
-                          ? "bg-secondary text-white shadow-sm"
-                          : "text-white/80 hover:text-white hover:bg-white/10"
+                          ? "text-white"
+                          : "text-white/70 hover:text-white"
                       )}
                     >
                       <item.icon className={cn("w-4 h-4 mr-2", isActive ? "text-white" : "text-white/70")} />
