@@ -1,111 +1,104 @@
 import React from "react";
 import { Link } from "wouter";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BookOpen, LayoutDashboard, BarChart3, Info } from "lucide-react";
+import { ArrowRight, LayoutDashboard, BarChart3, FileText } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function Home() {
   return (
-    <div className="space-y-8">
+    <div className="min-h-[calc(100vh-4rem)] bg-gray-50 flex flex-col">
       {/* Hero Section */}
-      <section className="text-center space-y-4 py-12">
-        <h1 className="text-4xl font-extrabold tracking-tight text-primary sm:text-5xl md:text-6xl">
-          Modality Decision Support Tool
-        </h1>
-        <p className="max-w-3xl mx-auto text-xl text-muted-foreground">
-          Evidence-based support for determining module delivery modality across In-Person, Blended, Online, and HyFlex formats, aligned with programme-level coherence.
-        </p>
-      </section>
-
-      {/* Action Cards */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Link href="/module">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer border-t-4 border-t-primary h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="h-6 w-6 text-primary" />
+      <div className="bg-primary py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+             <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-white blur-3xl"></div>
+             <div className="absolute top-1/2 left-1/2 w-64 h-64 rounded-full bg-secondary blur-3xl"></div>
+        </div>
+        
+        <div className="max-w-6xl mx-auto relative z-10">
+          <h1 className="text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-6">
+            Modality Decision Support Tool
+          </h1>
+          <p className="text-lg md:text-xl text-blue-100 max-w-2xl mb-10 leading-relaxed">
+            Evidence-based support for determining module delivery modality across In-Person, Blended, Online, and HyFlex formats, aligned with programme-level coherence.
+          </p>
+          
+          <div className="flex flex-wrap gap-4">
+            <Link href="/module">
+              <Button size="lg" className="bg-secondary hover:bg-secondary/90 text-white font-bold px-8 py-6 text-base h-auto shadow-lg hover:shadow-xl transition-all border-0 rounded-md">
                 Start with a Module
-              </CardTitle>
-              <CardDescription>
-                Get an evidence-based modality recommendation for a single module.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full group">
-                Go to Module Tool <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
               </Button>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/programme">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer border-t-4 border-t-secondary h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <LayoutDashboard className="h-6 w-6 text-secondary" />
-                Review a Programme
-              </CardTitle>
-              <CardDescription>
-                View programme-level coherence and weekly load distributions.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full group">
-                View Dashboard <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            
+            <Link href="/visualisations">
+              <Button size="lg" variant="outline" className="bg-transparent text-white border-white/30 hover:bg-white/10 font-medium px-8 py-6 text-base h-auto backdrop-blur-sm">
+                View Visualisations <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/visualisations">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer border-t-4 border-t-accent-foreground h-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-6 w-6 text-accent-foreground" />
-                Explore Visualisations
-              </CardTitle>
-              <CardDescription>
-                Deep dive into visual data across modules and programmes.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full group">
-                See Charts <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </CardContent>
-          </Card>
-        </Link>
-      </section>
-
-      {/* How it works */}
-      <section className="bg-muted/30 rounded-xl p-8 border border-border">
-        <div className="flex items-start gap-4">
-          <Info className="h-8 w-8 text-primary shrink-0 mt-1" />
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-foreground">How this tool works</h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="space-y-2">
-                <h3 className="font-semibold text-primary">Evidence-Based Decisions</h3>
-                <p className="text-sm text-muted-foreground">
-                  Module decisions are informed by learning design, assessment suitability, learner profile, stage appropriateness, and resource constraints.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-semibold text-primary">Programme Coherence</h3>
-                <p className="text-sm text-muted-foreground">
-                  The programme view allows teams to see how individual module decisions aggregate into a coherent student experience with balanced weekly loads.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-semibold text-primary">Collegial Support</h3>
-                <p className="text-sm text-muted-foreground">
-                  There are no approvals or sign-offs in this tool. It is designed to support collegial discussion and design, not hierarchical control.
-                </p>
-              </div>
-            </div>
+            </Link>
           </div>
         </div>
-      </section>
+      </div>
+
+      {/* Cards Section */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-20 pb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          
+          {/* Card 1 */}
+          <Link href="/programme">
+            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 shadow-lg group cursor-pointer overflow-hidden">
+              <CardContent className="p-8">
+                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
+                  <LayoutDashboard className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">1. Review Programme</h3>
+                <p className="text-gray-500 leading-relaxed">
+                  View programme-level coherence and weekly load distributions to ensure balanced student workloads.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          {/* Card 2 */}
+          <Link href="/module">
+            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 shadow-lg group cursor-pointer overflow-hidden">
+              <CardContent className="p-8">
+                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
+                  <FileText className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">2. Define Module</h3>
+                <p className="text-gray-500 leading-relaxed">
+                  Input module details, learning activities, and assessments to get an evidence-based modality recommendation.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          {/* Card 3 */}
+          <Link href="/visualisations">
+            <Card className="h-full hover:shadow-xl transition-all duration-300 border-0 shadow-lg group cursor-pointer overflow-hidden">
+              <CardContent className="p-8">
+                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary/10 transition-colors">
+                  <BarChart3 className="h-6 w-6 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">3. Visualize</h3>
+                <p className="text-gray-500 leading-relaxed">
+                  Deep dive into visual data with radar charts, heatmaps, and modality mix analysis.
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+        </div>
+      </div>
+      
+      {/* Bottom Info Section */}
+      <div className="bg-white border-t py-12 mt-auto">
+         <div className="max-w-6xl mx-auto px-4 text-center">
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+               This tool is designed to support collegial discussion and design. There are no approvals or sign-offs required. 
+               Decisions are informed by learning design, assessment suitability, learner profile, and resource constraints.
+            </p>
+         </div>
+      </div>
     </div>
   );
 }

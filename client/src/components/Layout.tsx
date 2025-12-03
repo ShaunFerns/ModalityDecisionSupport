@@ -1,66 +1,82 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, BookOpen, BarChart3, Home as HomeIcon } from "lucide-react";
+import { LayoutDashboard, BookOpen, BarChart3, Home as HomeIcon, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
 
   const navItems = [
     { href: "/", label: "Home", icon: HomeIcon },
-    { href: "/module", label: "Module", icon: BookOpen },
     { href: "/programme", label: "Programme", icon: LayoutDashboard },
+    { href: "/module", label: "Modules", icon: BookOpen },
     { href: "/visualisations", label: "Visualisations", icon: BarChart3 },
   ];
 
   return (
     <div className="min-h-screen bg-background font-sans flex flex-col">
       {/* Top Navigation */}
-      <nav className="bg-white border-b border-border sticky top-0 z-50 shadow-sm">
+      <nav className="bg-primary text-white sticky top-0 z-50 shadow-md border-b border-primary-foreground/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
-                <span className="text-xl font-bold text-primary tracking-tight">MDST</span>
+          <div className="flex justify-between h-16 items-center">
+            
+            {/* Logo Area */}
+            <div className="flex items-center gap-3">
+              <div className="bg-secondary/20 p-1.5 rounded-md">
+                 <Layers className="h-6 w-6 text-secondary-foreground" />
               </div>
-              <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
-                {navItems.map((item) => (
+              <span className="text-lg font-bold tracking-tight text-white">MDST Tool</span>
+            </div>
+
+            {/* Desktop Nav */}
+            <div className="hidden md:flex items-center space-x-1">
+              {navItems.map((item) => {
+                 const isActive = location === item.href || (item.href !== "/" && location.startsWith(item.href));
+                 return (
                   <Link key={item.href} href={item.href}>
                     <a
                       className={cn(
-                        "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium h-full transition-colors",
-                        location === item.href
-                          ? "border-primary text-primary"
-                          : "border-transparent text-muted-foreground hover:border-gray-300 hover:text-foreground"
+                        "inline-flex items-center px-4 py-2 rounded-md text-sm font-medium transition-all duration-200",
+                        isActive
+                          ? "bg-secondary text-white shadow-sm"
+                          : "text-white/80 hover:text-white hover:bg-white/10"
                       )}
                     >
-                      <item.icon className="w-4 h-4 mr-2" />
+                      <item.icon className={cn("w-4 h-4 mr-2", isActive ? "text-white" : "text-white/70")} />
                       {item.label}
                     </a>
                   </Link>
-                ))}
-              </div>
+                );
+              })}
             </div>
-            <div className="flex items-center">
-               <span className="text-xs text-muted-foreground">TU Dublin Modality Tool</span>
+
+            {/* Mobile Menu Placeholder (Optional) */}
+            <div className="md:hidden">
+               <Button variant="ghost" size="sm" className="text-white hover:bg-white/10">
+                  Menu
+               </Button>
             </div>
           </div>
         </div>
       </nav>
 
       {/* Main Content */}
-      <main className="flex-grow">
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="flex-grow bg-gray-50">
           {children}
-        </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-border mt-auto">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Modality Decision Support Tool. Evidence-based decision support.
+      <footer className="bg-white border-t border-border">
+        <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} Modality Decision Support Tool.
           </p>
+          <div className="text-sm text-muted-foreground flex gap-4">
+             <span>Evidence-based decision support</span>
+             <span>•</span>
+             <span>Collegial Design</span>
+          </div>
         </div>
       </footer>
     </div>

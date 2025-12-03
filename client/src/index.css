@@ -9,13 +9,13 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   
-  /* TU Dublin Palette Approximation */
-  /* Primary Blue */
-  --color-primary: hsl(202 100% 26%); /* #005587 */
+  /* Updated Palette to match Reference Image */
+  /* Primary: Deep Navy Blue */
+  --color-primary: hsl(205 100% 23%); /* #003B73 approx - Deep Blue */
   --color-primary-foreground: hsl(0 0% 100%);
 
-  /* Secondary / Accent */
-  --color-secondary: hsl(198 100% 45%); /* Light Blue */
+  /* Secondary: Teal/Green */
+  --color-secondary: hsl(175 80% 40%); /* #14b8a6 approx - Teal */
   --color-secondary-foreground: hsl(0 0% 100%);
 
   /* Backgrounds */
@@ -39,11 +39,11 @@
 
   --color-border: hsl(210 15% 85%);
   --color-input: hsl(210 15% 85%);
-  --color-ring: hsl(202 100% 26%);
+  --color-ring: hsl(175 80% 40%); /* Ring matches secondary teal */
 
-  --color-chart-1: hsl(202 100% 26%); /* In-Person */
-  --color-chart-2: hsl(198 80% 50%); /* Blended */
-  --color-chart-3: hsl(170 70% 45%); /* Online */
+  --color-chart-1: hsl(205 100% 23%); /* In-Person */
+  --color-chart-2: hsl(175 80% 40%); /* Blended */
+  --color-chart-3: hsl(190 70% 45%); /* Online */
   --color-chart-4: hsl(280 60% 60%); /* HyFlex */
   --color-chart-5: hsl(35 90% 55%);
 
