@@ -10,7 +10,26 @@ interface Props {
   onChange: (updates: Partial<ModalityState>) => void;
 }
 
+// Mock modules list - In a real app, this would come from a context or API shared with Programme page
+const availableModules = [
+  { code: "CMPU1001", name: "Introduction to Programming" },
+  { code: "CMPU2045", name: "Cloud Computing Architecture" },
+  { code: "CMPU3012", name: "User Experience Design" },
+  { code: "CMPU4010", name: "Advanced Software Engineering" }, // Extra one
+];
+
 export function ModuleIdentityCard({ state, onChange }: Props) {
+  
+  const handleModuleSelect = (value: string) => {
+    const selected = availableModules.find(m => m.code === value);
+    if (selected) {
+      onChange({ 
+        moduleCode: selected.code,
+        moduleName: selected.name
+      });
+    }
+  };
+
   return (
     <Card className="border-t-4 border-t-primary shadow-md overflow-hidden">
       <CardHeader className="bg-slate-50 pb-3 border-b">
@@ -20,6 +39,27 @@ export function ModuleIdentityCard({ state, onChange }: Props) {
         </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-4 pt-4">
+        
+        {/* Module Selection Dropdown (Replaces Text Input) */}
+        <div className="grid gap-2">
+          <Label>Select Module from Programme</Label>
+          <Select 
+            value={state.moduleCode} 
+            onValueChange={handleModuleSelect}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a module..." />
+            </SelectTrigger>
+            <SelectContent>
+              {availableModules.map((mod) => (
+                <SelectItem key={mod.code} value={mod.code}>
+                  {mod.code} - {mod.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
         <div className="grid grid-cols-2 gap-4">
           <div className="grid gap-2">
             <Label htmlFor="moduleCode">Module Code</Label>
@@ -28,7 +68,8 @@ export function ModuleIdentityCard({ state, onChange }: Props) {
               value={state.moduleCode || ""} 
               onChange={(e) => onChange({ moduleCode: e.target.value })} 
               placeholder="e.g. CMPU1010"
-              className="font-medium uppercase"
+              className="font-medium uppercase bg-muted/50"
+              readOnly // Making it read-only since it's selected from dropdown, or keep editable if override needed
             />
           </div>
           <div className="grid gap-2">
@@ -38,7 +79,8 @@ export function ModuleIdentityCard({ state, onChange }: Props) {
               value={state.moduleName} 
               onChange={(e) => onChange({ moduleName: e.target.value })} 
               placeholder="e.g. Advanced Data Structures"
-              className="font-medium"
+              className="font-medium bg-muted/50"
+              readOnly // Making it read-only since it's selected from dropdown
             />
           </div>
         </div>

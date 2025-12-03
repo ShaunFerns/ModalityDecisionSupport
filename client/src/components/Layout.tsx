@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useLocation } from "wouter";
 import { LayoutDashboard, BookOpen, BarChart3, Home as HomeIcon, Layers, FileText, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -8,8 +8,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
 
   const navItems = [
-    { href: "/module", label: "Modules", icon: BookOpen },
     { href: "/programme", label: "Programme", icon: Settings },
+    { href: "/module", label: "Modules", icon: BookOpen },
     { href: "/visualisations", label: "Visualisations", icon: BarChart3 },
   ];
 
