@@ -8,7 +8,7 @@ export interface ModalityState {
   students: number;
   learnerMix: string;
 
-  // Activities (B1)
+  // B1. Learning Activities
   activities: {
     knowledgeAcquisition: boolean;
     problemBased: boolean;
@@ -20,17 +20,17 @@ export interface ModalityState {
     project: boolean;
   };
 
-  // Assessment (B2)
+  // B2. Assessment Types (No, Minor, Major)
   assessments: {
-    exam: boolean;
-    authentic: boolean;
-    group: boolean;
-    portfolio: boolean;
-    lab: boolean;
-    presentation: boolean;
+    exam: "No" | "Minor" | "Major";
+    authentic: "No" | "Minor" | "Major";
+    group: "No" | "Minor" | "Major";
+    portfolio: "No" | "Minor" | "Major";
+    lab: "No" | "Minor" | "Major";
+    presentation: "No" | "Minor" | "Major";
   };
 
-  // Resources (B3)
+  // B3. Resources & Constraints
   resources: {
     labRequired: boolean;
     studioRequired: boolean;
@@ -40,21 +40,14 @@ export interface ModalityState {
     staffComfort: boolean; // "Staff capacity = comfortable" rule
   };
 
-  // Profile (B4)
+  // B4. Learner Profile
   profile: {
     commuter: boolean;
     digitalConfidence: boolean;
     lowDigitalAccessRisk: boolean;
-    international: boolean;
     working: boolean;
+    international: boolean;
     stage1Transition: boolean;
-  };
-
-  // Weekly (B5)
-  weekly: {
-    lecture: string;
-    lab: string;
-    tutorial: string;
   };
 }
 
@@ -64,7 +57,7 @@ export const initialModalityState: ModalityState = {
   credits: 5,
   hours: 4,
   students: 30,
-  learnerMix: "Standard",
+  learnerMix: "Standard UG",
   activities: {
     knowledgeAcquisition: false,
     problemBased: false,
@@ -76,12 +69,12 @@ export const initialModalityState: ModalityState = {
     project: false,
   },
   assessments: {
-    exam: false,
-    authentic: false,
-    group: false,
-    portfolio: false,
-    lab: false,
-    presentation: false,
+    exam: "No",
+    authentic: "No",
+    group: "No",
+    portfolio: "No",
+    lab: "No",
+    presentation: "No",
   },
   resources: {
     labRequired: false,
@@ -95,14 +88,9 @@ export const initialModalityState: ModalityState = {
     commuter: false,
     digitalConfidence: true,
     lowDigitalAccessRisk: true,
-    international: false,
     working: false,
+    international: false,
     stage1Transition: false,
-  },
-  weekly: {
-    lecture: "in-person",
-    lab: "in-person",
-    tutorial: "in-person",
   },
 };
 
@@ -112,11 +100,11 @@ export interface ScoreResult {
   online: number;
   hyflex: number;
   dimensions: {
-    learningDesign: number;
-    assessment: number;
-    learnerProfile: number;
-    stageFit: number;
-    feasibility: number;
+    learningDesign: { inPerson: number, blended: number, online: number, hyflex: number };
+    assessment: { inPerson: number, blended: number, online: number, hyflex: number };
+    learnerProfile: { inPerson: number, blended: number, online: number, hyflex: number };
+    stageFit: { inPerson: number, blended: number, online: number, hyflex: number };
+    feasibility: { inPerson: number, blended: number, online: number, hyflex: number };
   };
   recommendation: string;
   risks: string[];
@@ -124,86 +112,102 @@ export interface ScoreResult {
 }
 
 export function scoreModality(state: ModalityState): ScoreResult {
-  // 1. Calculate Dimension Scores (0-100) for each Modality
-  // This is a simplified heuristic based on the prompt's description.
-  
-  // --- Dimension 1: Learning Design Fit (40%) ---
-  // Activities favoring In-Person: Labs, Fieldwork, Workshops
-  // Activities favoring Online: Knowledge Acquisition, Reflection
-  // Activities favoring Blended: Problem Based, Project
-  
-  let ld_ip = 50;
-  let ld_bl = 50;
-  let ld_on = 50;
-  let ld_hf = 50;
-
-  if (state.activities.labs) { ld_ip += 30; ld_bl += 10; ld_on -= 20; }
-  if (state.activities.fieldwork) { ld_ip += 30; ld_bl += 10; ld_on -= 20; }
-  if (state.activities.workshops) { ld_ip += 20; ld_bl += 20; ld_on -= 10; }
-  if (state.activities.knowledgeAcquisition) { ld_on += 20; ld_bl += 10; }
-  if (state.activities.reflection) { ld_on += 20; ld_bl += 20; }
-  if (state.activities.project) { ld_bl += 30; ld_hf += 10; }
-  
-  // --- Dimension 2: Assessment Fit (20%) ---
-  let as_ip = 50;
-  let as_bl = 50;
-  let as_on = 50;
-  
-  if (state.assessments.exam) { as_ip += 30; as_on -= 10; }
-  if (state.assessments.lab) { as_ip += 30; as_on -= 20; }
-  if (state.assessments.presentation) { as_ip += 20; as_bl += 10; as_on += 10; }
-  if (state.assessments.portfolio) { as_on += 20; as_bl += 20; }
-  
-  // --- Dimension 3: Learner Profile & Equity (20%) ---
-  let eq_ip = 50;
-  let eq_bl = 50;
-  let eq_on = 50;
-  
-  if (state.profile.commuter) { eq_on += 30; eq_bl += 20; eq_ip -= 10; }
-  if (state.profile.working) { eq_on += 30; eq_bl += 20; eq_ip -= 10; }
-  if (state.profile.international) { eq_bl += 10; eq_on += 10; }
-  if (state.profile.stage1Transition) { eq_ip += 40; eq_bl += 20; eq_on -= 20; }
-  if (!state.profile.lowDigitalAccessRisk) { eq_on -= 40; eq_bl -= 20; }
-  
-  // --- Dimension 4: Stage Fit (10%) ---
-  let st_ip = 50;
-  let st_bl = 50;
-  let st_on = 50;
-  
-  if (state.stage === "1") { st_ip += 40; st_on -= 20; }
-  if (state.stage === "4") { st_bl += 30; st_on += 20; }
-  
-  // --- Dimension 5: Feasibility (10%) ---
-  let fe_ip = 50;
-  let fe_bl = 50;
-  let fe_on = 50;
-  
-  if (state.resources.labRequired) { fe_ip += 40; fe_on -= 40; }
-  if (state.resources.studioRequired) { fe_ip += 40; fe_on -= 40; }
-  if (state.resources.equipment) { fe_ip += 40; fe_on -= 40; }
-  if (state.resources.remoteFriendly) { fe_on += 40; fe_bl += 20; }
-
-  // Normalization Helper
   const clamp = (n: number) => Math.min(100, Math.max(0, n));
 
-  // Calculate Weighted Scores
-  const score = (ld: number, as: number, eq: number, st: number, fe: number) => {
-    return (clamp(ld) * 0.4) + (clamp(as) * 0.2) + (clamp(eq) * 0.2) + (clamp(st) * 0.1) + (clamp(fe) * 0.1);
+  // --- Dimension 1: Learning Design Fit (40%) ---
+  let ld = { inPerson: 50, blended: 50, online: 50, hyflex: 50 };
+
+  if (state.activities.labs) { ld.inPerson += 30; ld.blended += 10; ld.online -= 30; ld.hyflex -= 10; }
+  if (state.activities.fieldwork) { ld.inPerson += 30; ld.blended += 10; ld.online -= 40; ld.hyflex -= 20; }
+  if (state.activities.workshops) { ld.inPerson += 20; ld.blended += 20; ld.online -= 10; ld.hyflex += 0; }
+  if (state.activities.discussion) { ld.inPerson += 10; ld.blended += 10; ld.online += 10; ld.hyflex += 10; }
+  if (state.activities.knowledgeAcquisition) { ld.online += 20; ld.blended += 10; ld.hyflex += 10; }
+  if (state.activities.reflection) { ld.online += 20; ld.blended += 20; }
+  if (state.activities.project) { ld.blended += 30; ld.hyflex += 10; }
+
+  // --- Dimension 2: Assessment Fit (20%) ---
+  let as = { inPerson: 50, blended: 50, online: 50, hyflex: 50 };
+
+  const assessWeight = (type: string) => type === "Major" ? 2 : type === "Minor" ? 1 : 0;
+
+  if (assessWeight(state.assessments.exam) > 0) { as.inPerson += 30; as.online -= 10; }
+  if (assessWeight(state.assessments.lab) > 0) { as.inPerson += 30; as.online -= 20; as.hyflex -= 10; }
+  if (assessWeight(state.assessments.presentation) > 0) { as.inPerson += 20; as.blended += 10; as.online += 10; as.hyflex += 10; }
+  if (assessWeight(state.assessments.portfolio) > 0) { as.online += 20; as.blended += 20; as.hyflex += 10; }
+  if (assessWeight(state.assessments.group) > 0) { as.inPerson += 10; as.blended += 10; as.online += 5; }
+  if (assessWeight(state.assessments.authentic) > 0) { as.blended += 20; as.online += 10; }
+
+  // --- Dimension 3: Learner Profile & Equity (20%) ---
+  let eq = { inPerson: 50, blended: 50, online: 50, hyflex: 50 };
+
+  if (state.profile.commuter) { eq.online += 30; eq.blended += 20; eq.hyflex += 30; eq.inPerson -= 10; }
+  if (state.profile.working) { eq.online += 30; eq.blended += 20; eq.hyflex += 30; eq.inPerson -= 10; }
+  if (state.profile.international) { eq.blended += 10; eq.inPerson += 10; }
+  if (state.profile.stage1Transition) { eq.inPerson += 40; eq.blended += 20; eq.online -= 20; eq.hyflex -= 10; }
+  
+  // Equity Risk Logic for HyFlex/Online
+  if (!state.profile.lowDigitalAccessRisk) { eq.online -= 40; eq.hyflex -= 20; eq.blended -= 10; }
+  if (state.profile.digitalConfidence === false) { eq.online -= 20; eq.hyflex -= 10; }
+
+  // --- Dimension 4: Stage Fit (10%) ---
+  let st = { inPerson: 50, blended: 50, online: 50, hyflex: 50 };
+
+  if (state.stage === "1") { st.inPerson += 40; st.blended += 10; st.online -= 20; st.hyflex -= 10; }
+  if (state.stage === "2") { st.inPerson += 20; st.blended += 30; }
+  if (state.stage === "3") { st.blended += 40; st.online += 10; st.hyflex += 10; }
+  if (state.stage === "4" || state.stage === "M") { st.blended += 30; st.online += 30; st.hyflex += 20; }
+
+  // --- Dimension 5: Feasibility / Resource Fit (10%) ---
+  let fe = { inPerson: 50, blended: 50, online: 50, hyflex: 50 };
+
+  if (state.resources.labRequired) { fe.inPerson += 40; fe.online -= 40; fe.hyflex -= 20; }
+  if (state.resources.studioRequired) { fe.inPerson += 40; fe.online -= 40; fe.hyflex -= 20; }
+  if (state.resources.equipment) { fe.inPerson += 40; fe.online -= 40; fe.hyflex -= 20; }
+  if (state.resources.remoteFriendly) { fe.online += 40; fe.blended += 20; fe.hyflex += 20; }
+  
+  // HyFlex Feasibility Constraints
+  // "HyFlex receives 0 or low scores if: Staff comfort is unchecked"
+  if (!state.resources.staffComfort) {
+    fe.hyflex = 0; // Hard penalty
+  }
+
+  // HyFlex penalty if Lab/Studio required but not simulation/remote friendly
+  if ((state.resources.labRequired || state.resources.studioRequired) && 
+      !state.resources.remoteFriendly && !state.resources.simulation) {
+      fe.hyflex = Math.min(fe.hyflex, 20);
+      fe.online = Math.min(fe.online, 10);
+  }
+
+
+  // --- Aggregation ---
+  const calculateTotal = (modality: 'inPerson' | 'blended' | 'online' | 'hyflex') => {
+    return (
+      (clamp(ld[modality]) * 0.4) +
+      (clamp(as[modality]) * 0.2) +
+      (clamp(eq[modality]) * 0.2) +
+      (clamp(st[modality]) * 0.1) +
+      (clamp(fe[modality]) * 0.1)
+    );
   };
 
-  let score_ip = score(ld_ip, as_ip, eq_ip, st_ip, fe_ip);
-  let score_bl = score(ld_bl, as_bl, eq_bl, st_bl, fe_bl);
-  let score_on = score(ld_on, as_on, eq_on, st_on, fe_on);
+  let score_ip = calculateTotal('inPerson');
+  let score_bl = calculateTotal('blended');
+  let score_on = calculateTotal('online');
+  let score_hf = calculateTotal('hyflex');
+
+  // Global HyFlex Constraints (Post-calculation overrides)
+  // "HyFlex receives 0 or low scores if: Staff comfort is unchecked"
+  if (!state.resources.staffComfort) score_hf = Math.min(score_hf, 20);
   
-  // HyFlex Logic
-  // Base HyFlex on Blended score but penalize for constraints
-  let score_hf = score_bl * 0.9; 
-  
-  // HyFlex Constraints
-  if (!state.resources.staffComfort) score_hf = Math.min(score_hf, 30);
-  if (!state.profile.lowDigitalAccessRisk) score_hf = Math.min(score_hf, 30);
-  if (state.students > 100) score_hf -= 20; // Large class penalty for HyFlex management
-  
+  // "Digital access risk is high" -> (lowDigitalAccessRisk is false)
+  if (!state.profile.lowDigitalAccessRisk) {
+     score_on = Math.min(score_on, 40);
+     score_hf = Math.min(score_hf, 40); 
+  }
+
+  score_ip = clamp(score_ip);
+  score_bl = clamp(score_bl);
+  score_on = clamp(score_on);
   score_hf = clamp(score_hf);
 
   // Identify Strongest Factors
@@ -211,13 +215,14 @@ export function scoreModality(state: ModalityState): ScoreResult {
   if (state.activities.labs || state.resources.labRequired) factors.push("Practical/Lab Requirements");
   if (state.profile.stage1Transition) factors.push("First Year Transition Needs");
   if (state.profile.commuter || state.profile.working) factors.push("Flexibility for Commuters/Workers");
-  if (state.resources.staffComfort) factors.push("Staff HyFlex Readiness");
+  if (state.resources.staffComfort && score_hf > 50) factors.push("Staff HyFlex Readiness");
+  if (state.activities.project) factors.push("Project-based Learning Suitability");
 
   // Risks
   const risks = [];
   if (state.profile.stage1Transition && score_on > 60) risks.push("High Online risk for Stage 1 students");
   if (!state.profile.lowDigitalAccessRisk && (score_on > 50 || score_hf > 50)) risks.push("Digital Access Equity Risk");
-  if (state.students > 100 && score_hf > 50) risks.push("Large HyFlex cohort management difficulty");
+  if (!state.resources.staffComfort && score_hf > 30) risks.push("Staff not comfortable with HyFlex");
 
   // Recommendation
   const scores = { "In-Person": score_ip, "Blended": score_bl, "Online": score_on, "HyFlex": score_hf };
@@ -229,11 +234,21 @@ export function scoreModality(state: ModalityState): ScoreResult {
     online: Math.round(score_on),
     hyflex: Math.round(score_hf),
     dimensions: {
-      learningDesign: Math.round(ld_bl), // simplified for radar visualization sake, typically would be per modality
-      assessment: Math.round(as_bl),
-      learnerProfile: Math.round(eq_bl),
-      stageFit: Math.round(st_bl),
-      feasibility: Math.round(fe_bl)
+      learningDesign: { 
+        inPerson: Math.round(ld.inPerson), blended: Math.round(ld.blended), online: Math.round(ld.online), hyflex: Math.round(ld.hyflex) 
+      },
+      assessment: { 
+        inPerson: Math.round(as.inPerson), blended: Math.round(as.blended), online: Math.round(as.online), hyflex: Math.round(as.hyflex) 
+      },
+      learnerProfile: { 
+        inPerson: Math.round(eq.inPerson), blended: Math.round(eq.blended), online: Math.round(eq.online), hyflex: Math.round(eq.hyflex) 
+      },
+      stageFit: { 
+        inPerson: Math.round(st.inPerson), blended: Math.round(st.blended), online: Math.round(st.online), hyflex: Math.round(st.hyflex) 
+      },
+      feasibility: { 
+        inPerson: Math.round(fe.inPerson), blended: Math.round(fe.blended), online: Math.round(fe.online), hyflex: Math.round(fe.hyflex) 
+      }
     },
     recommendation,
     risks,

@@ -1,0 +1,478 @@
+Build the “Modality Decision Support Tool (MDST)” with 4-page navigation
+1. Project & Tech Setup
+
+Use the same framework as the Assessment Mapping tool (e.g. Flask + Jinja + JS, or Node + Express + JS).
+
+Reuse the same base layout and navigation where possible.
+
+Create folders:
+
+/templates
+
+/static/css
+
+/static/js
+
+/static/img (if needed)
+
+/data (for JSON stubs if required)
+
+Dependencies:
+
+Chart.js (radar, bar, stacked bar)
+
+A simple heatmap implementation (Chart.js matrix plugin or custom)
+
+Existing CSS framework (Bootstrap or Tailwind) used in other tools
+
+2. Global Layout & Navigation
+
+Create a base template (e.g. base.html) with:
+
+Top navigation bar with these items:
+
+Home
+
+Programme
+
+Module
+
+Visualisations
+
+Active menu highlighting (same behaviour as the Assessment tool).
+
+Shared footer.
+
+Pages (routes):
+
+/ → Home
+
+/programme → Programme view
+
+/module → Module view
+
+/visualisations → Visualisations view
+
+All pages extend base.html.
+
+3. HOME PAGE (/, home.html)
+Purpose
+
+Introduce MDST and link users into Programme and Module views.
+
+Content
+
+In home.html:
+
+Page title:
+“Modality Decision Support Tool (MDST)”
+
+Short description text, e.g.:
+
+Evidence-based support for determining module delivery modality across In-Person, Blended, Online, and HyFlex formats, aligned with programme-level coherence.
+
+Three large buttons or cards:
+
+“Start with a Module” → links to /module
+
+“Review a Programme” → links to /programme
+
+“Explore Visualisations” → links to /visualisations
+
+A brief “How this tool works” box outlining:
+
+Module decisions are informed by learning design, assessment, learner profile, stage, and constraints.
+
+Programme view shows coherence and weekly load.
+
+No approvals or sign-off; it is a collegial design support.
+
+No scoring logic on this page.
+
+4. MODULE PAGE (/module, module.html)
+Purpose
+
+Allow a module lead (or any team member) to get an evidence-based modality recommendation for a single module, and then optionally explore weekly micro-patterns.
+
+The page is one screen with vertical panels:
+
+Panel A: Module Identity
+Panel B: Drivers (B1–B4)
+Panel C: Recommendation & Charts
+Panel D: Optional Micro Pattern Planner
+Panel E: Summary & Export
+
+4.1 Panel A – Module Identity
+
+Form fields:
+
+Module Name (text)
+
+Stage (dropdown: Stage 1 / 2 / 3 / 4)
+
+Credits (ECTS) (number)
+
+Weekly Hours (number)
+
+Number of Students (number)
+
+Typical Learner Mix (dropdown, e.g. Standard UG / Part-time / Work-based / International)
+
+These fields are stored in a JS object and also used later in the micro planner (for group calculations).
+
+4.2 Panel B – Drivers (Decision Inputs)
+
+All of B1–B4 feed into the scoring engine.
+B5 is removed from scoring and will live later as a separate planner (Panel D).
+
+B1. Learning Activities (checkbox grid)
+
+Checkbox options:
+
+Knowledge Acquisition
+
+Problem-based / Inquiry
+
+Labs / Practical / Studio
+
+Workshops / Hands-on sessions
+
+Discussion / Seminar
+
+Fieldwork / Site visits
+
+Reflection / Journals / Portfolios
+
+Project-based / Team projects
+
+Store selections in an array.
+
+B2. Assessment Types
+
+A compact table with rows: Exam, Authentic CA, Group Assessment, Portfolio, Lab/Practical, Presentation.
+
+For each row: dropdown with options No, Minor, Major.
+
+These map to numeric weights in the scoring logic.
+
+B3. Resources & Constraints
+
+Checkboxes:
+
+Lab Required
+
+Studio Required
+
+Specialist Equipment
+
+Simulation Available
+
+Remote-Friendly Content
+
+Staff Comfortable with HyFlex (yes/no toggle)
+
+These constrain feasibility of Online/HyFlex in the scoring logic.
+
+B4. Learner Profile & Equity
+
+Checkbox options:
+
+Commuter-heavy
+
+High digital confidence
+
+Low digital access risk
+
+Significant proportion working while studying
+
+International cohort
+
+Stage 1 transition-sensitive
+
+These influence the Learner Profile/Equity dimension score.
+
+4.3 Scoring Engine (front-end JS or back-end function)
+
+Create a function, e.g. in /static/js/module_scoring.js:
+
+function scoreModality(inputs) {
+  // inputs include: learningActivities, assessmentTypes, resources, learnerProfile, stage, weeklyHours, numStudents
+  // Return an object with dimension scores and overall scores for each modality.
+}
+
+
+Dimensions:
+
+Learning Design Fit (40%)
+
+Assessment Fit (20%)
+
+Learner Profile & Equity (20%)
+
+Stage Fit (10%)
+
+Feasibility / Resource Fit (10%)
+
+Modalities to score:
+
+inPerson
+
+blended
+
+online
+
+hyflex
+
+Rules:
+
+All scoring uses B1–B4 ONLY plus Stage and constraints.
+
+Do not use any B5/micro-pattern data in scoring.
+
+HyFlex receives 0 or low scores if:
+
+Staff comfort is unchecked
+
+Digital access risk is high
+
+Lab/Studio required but “remote-friendly” and/or “simulation available” are not ticked.
+
+Return structure:
+
+{
+  dimensions: {
+    learningDesign: { inPerson: n, blended: n, online: n, hyflex: n },
+    assessmentFit: {...},
+    learnerProfile: {...},
+    stageFit: {...},
+    feasibility: {...}
+  },
+  overall: {
+    inPerson: 0–100,
+    blended: 0–100,
+    online: 0–100,
+    hyflex: 0–100
+  },
+  recommended: "blended" // or other
+}
+
+
+Trigger:
+
+Recalculate whenever B1–B4 change, or on “Update Recommendation” button click.
+
+4.4 Panel C – Recommendation & Charts
+
+Right-hand side (or bottom on mobile).
+
+Charts and outputs:
+
+Radar Chart (Chart.js)
+
+Axes: Learning Design, Assessment Fit, Learner Profile, Stage Fit, Feasibility
+
+4 datasets: In-Person, Blended, Online, HyFlex
+
+Styled consistently with the Assessment tool.
+
+Assessment–Modality Matrix
+
+Table with rows = assessment types, columns = IP / Blend / Online / HyFlex
+
+Cells colour-coded (red–amber–green) based on relative suitability.
+
+Derived from scoring tables, not user input.
+
+Projected Modality Mix tile
+
+Shows % fit for each modality (e.g. IP 68, Blended 84, Online 70, HyFlex 76).
+
+Highlight the highest as “Recommended”.
+
+Recommendation card
+
+Heading: e.g. “Blended”
+
+Subtext: “Based on highest fit score (84/100).”
+
+Short bullet list (auto-generated) of 3 strongest factors (e.g. “Practical/Lab requirements”, “Flexibility for commuters”, “Staff HyFlex readiness”).
+
+A short “risks/considerations” list (if any).
+
+Importantly:
+
+No “Deviation from Default” gauge.
+
+No “Current selection vs recommended” conflict.
+
+4.5 Panel D – Micro Pattern Planner (Optional, Non-Scoring)
+
+This sits below the recommendation card.
+
+Label clearly:
+
+“Micro Pattern Planner (optional)”
+Use this section to explore your weekly lecture/lab/tutorial structure.
+It does not change the recommended modality or scores above.
+
+Inputs:
+
+Uses numStudents from Panel A.
+
+Fields:
+
+Tutorial group capacity (default 20, editable)
+
+Lab group capacity (default 16, editable)
+
+For each component:
+
+Lecture (1 group)
+
+Buttons or segmented controls:
+
+In-Person
+
+Online
+
+HyFlex
+
+Tutorials
+
+Show calculated “Groups required”: ceil(numStudents / tutorialCapacity)
+
+One modality selector for all tutorials:
+
+In-Person / Online / HyFlex
+
+Labs
+
+Show calculated “Groups required”: ceil(numStudents / labCapacity)
+
+Modality selector for all labs:
+
+In-Person / Online / HyFlex
+
+Grey out Online if “Lab Required” ticked and “Simulation Available” is not ticked.
+
+Grey out HyFlex if Staff Comfort = false.
+
+Outputs (display only):
+
+Calculated weekly on-campus hours vs online/HyFlex hours (based on weekly hours and chosen component modalities).
+
+Simple, non-judgemental fit indicators:
+
+Green dot if micro-pattern broadly aligns with recommended modality
+
+Amber if it partially diverges
+
+Red if it heavily contradicts (e.g. recommended Online but micro-pattern is fully in-person).
+
+Nothing from Panel D is sent back into the scoring function.
+
+4.6 Panel E – Summary & Export
+
+At the bottom of /module:
+
+A “Module Decision Summary” card containing:
+
+Recommended modality
+
+Fit scores for the four modalities
+
+Key factors
+
+Key risks (if any)
+
+Weekly on-campus vs online hours (from Panel D, if used)
+
+Buttons:
+
+Export PDF — module report (summary text + charts).
+
+Save JSON — current module data and scores in JSON format (for Programme and Visualisations pages).
+
+5. PROGRAMME PAGE (/programme, programme.html)
+Purpose
+
+Provide a programme-level overview of modality patterns. No approvals; purely a shared dashboard.
+
+Assume programme data is provided as JSON (from saved module files or a simple mock).
+
+Main components
+
+Programme selector (if multiple programmes exist).
+
+Module list with their recommended modalities and basic metadata.
+
+Programme Modality Heatmap
+
+X-axis: modules
+
+Y-axis: weeks or stages
+
+Cells coloured by chosen modality (IP/Blend/Online/HyFlex).
+
+Stage-level modality distribution
+
+Stacked bar or 100% bar per stage: % IP / Blend / Online / HyFlex.
+
+Weekly load chart
+
+Line or stacked bar showing on-campus vs online total hours per week (aggregated from Panel D micro-pattern data if available).
+
+High-level programme coherence radar
+
+Axes:
+
+Weekly load balance
+
+Stage progression alignment
+
+Equity impact
+
+Staff workload feasibility
+
+Modality consistency
+
+Values can be derived from simple calculated metrics.
+
+This page is read/write neutral: no approval buttons, just data and visuals.
+
+6. VISUALISATIONS PAGE (/visualisations, visualisations.html)
+Purpose
+
+Allow deeper exploration of visual data across modules and programmes.
+
+Content:
+
+Multi-module radar comparison (overlay 3–5 selected modules).
+
+Full-screen heatmap with filters (by stage, by modality).
+
+Pie or donut charts for overall modality mix.
+
+Equity / commuter-impact approximations if data is available.
+
+All charts are read-only aggregations of the module JSONs and programme data.
+
+7. Data Handling
+
+Store module-level data in JSON format, consistent with other tools.
+
+Programme page reads these JSONs (or mock data during MVP).
+
+Visualisations page reads the same store.
+
+No login or role control is required for MVP: any user can open the tool and load/edit/demo data, consistent with your other tools.
+
+8. Behaviour & Style Requirements
+
+Match the visual style and branding of the Assessment Mapping and Pathways tools (typography, colours, card layout).
+
+Ensure all interactions are responsive and accessible (labels, alt text, keyboard support).
+
+Avoid any language or UI that implies “approval”, “sign-off”, or “default = in-person”.
+
+The tool is explicitly collegial and supportive, not hierarchical.
