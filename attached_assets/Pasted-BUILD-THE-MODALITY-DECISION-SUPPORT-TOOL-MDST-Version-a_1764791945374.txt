@@ -1,0 +1,410 @@
+BUILD THE "MODALITY DECISION SUPPORT TOOL" (MDST)
+Version aligned with 4 approved modalities: In-Person, Blended, Online, HyFlex
+1. PROJECT SETUP
+
+Create a new project using:
+
+Python (Flask) OR Node.js (Express)
+(Use whichever matches the Assessment Mapping and Pathways tools already built.)
+
+Include folders:
+
+/static/css
+
+/static/js
+
+/templates
+
+/data
+
+/components (optional React-like components, if using JS)
+
+Install libraries:
+
+Chart.js (radar, heatmap, bar)
+
+D3.js (Sankey / flows)
+
+Bootstrap 5 or TailwindCSS (match existing tools)
+
+pandas (if Python)
+
+Jinja2 templating (if Flask)
+
+Maintain identical visual styling to Assessment Mapping and Pathways Mapping tools:
+
+TU Dublin colour palette
+
+two-column layout
+
+bold section headers
+
+card-based visual outputs
+
+2. CREATE PROJECT FILES
+/main.py or /app.js
+
+Handles routing, scoring, and generating visualisation data.
+
+/templates/modality_tool.html
+
+Main interface.
+
+/static/css/modality.css
+
+Mirror the style of:
+
+assessment_mapping.css
+
+pathways.css
+
+/static/js/modality.js
+
+For dynamic charts, radar, heatmaps, Sankey-style weekly maps.
+
+3. TOOL STRUCTURE (MUST MATCH EXISTING TOOLS)
+
+The tool must have five main panels:
+
+Panel A — Module Identity Card
+
+Mirrors the "Module Overview" box used in Assessment Mapping.
+Inputs:
+
+Module name
+
+Stage (1–4)
+
+Credits
+
+Weekly hours
+
+Number of students
+
+Typical learner mix (drop-down with defaults)
+
+Panel B — Quick Inputs (checkboxes, dropdowns, toggles)
+
+Must mirror Assessment Mapping’s checkbox grid.
+
+Section B1. Learning Activities (checkbox grid)
+Options:
+
+Knowledge acquisition
+
+Problem-based learning
+
+Labs/studio
+
+Workshop
+
+Discussion-based
+
+Fieldwork
+
+Reflective tasks
+
+Project-based
+
+Section B2. Assessment Types (dropdowns)
+Use same formatting as Assessment Mapping Tool.
+
+Exam
+
+CA (authentic)
+
+Group assessment
+
+Portfolio
+
+Lab/Studio
+
+Presentation
+
+Section B3. Resources & Constraints (icons)
+Same icon style as Pathways Tool:
+
+Lab required
+
+Studio required
+
+Specialist equipment
+
+Simulation available
+
+Remote-friendly
+
+Section B4. Learner Profile (proxy-supported)
+(Checkboxes)
+
+Commuter-heavy
+
+High digital confidence
+
+Low digital access risk
+
+International cohort
+
+Working learners
+
+Stage 1 transition-sensitive
+
+Section B5. Weekly Delivery Pattern
+(Toggles — identical UI to Pathways’ directional toggles)
+
+Lecture: In-person / Mixed / Online / HyFlex
+
+Lab: In-person / Mixed / Online / HyFlex
+
+Tutorial: In-person / Online
+
+4. SCORING ENGINE (BACK-END)
+
+Create a function:
+
+score_modality(module_inputs)
+
+
+It must output scores 0–100 for each modality:
+
+In-Person
+
+Blended
+
+Online
+
+HyFlex
+
+Weighting Model (must match design spec):
+Dimension	Weight
+Learning Design Fit	40%
+Assessment Fit	20%
+Learner Profile & Equity	20%
+Stage Fit	10%
+Feasibility / Resource Fit	10%
+
+HyFlex scoring rules:
+
+Only score HyFlex positively if:
+
+Staff capacity = "comfortable"
+
+Digital access risk is low
+
+Numbers < 100 students OR tool gives a caution
+
+If constraints not met, HyFlex score = 0–30 max
+
+Output JSON:
+
+{
+  "in_person": 72,
+  "blended": 88,
+  "online": 54,
+  "hyflex": 41,
+  "dimensions": {...}
+}
+
+5. VISUALISATIONS (MIRROR EXISTING TOOLS)
+1. Radar Chart (Chart.js)
+
+Axes:
+
+Learning Design
+
+Assessment Fit
+
+Equity
+
+Stage Fit
+
+Feasibility
+
+Four layers:
+
+In-person
+
+Blended
+
+Online
+
+HyFlex
+
+Use exact visual styling from Assessment Mapping radar.
+
+2. Assessment–Modality Matrix (Heatmap)
+
+Rows: assessment types
+Columns: 4 modalities
+Cells: green-to-red colour scaling
+Match the same heatmap style in Assessment Tool.
+
+3. Weekly Pattern Card (2-column card)
+
+Left: On-campus time
+Right: Online/HyFlex mix
+Below: Weekly distribution bar (3 colours)
+
+4. Modality Mix Tile
+
+Identical layout to Pathways Summary Tile:
+
+Four colour blocks
+
+% per modality
+
+5. Programme Heatmap (Optional View)
+
+If user is a module lead → read-only
+If user is a programme chair → editable
+
+Grid:
+
+Modules horizontally
+
+Weeks vertically
+Cells coloured by modality
+(Use Pathways heatmap styles)
+
+6. Deviation-from-Default Indicator
+
+A horizontal bar comparing:
+
+Default = 100% In-Person
+
+Evidence-based recommended pattern
+
+Current selection
+
+Use the same bar-format you used for NFQ pathways.
+
+7. Programme Coherence Radar (Optional)
+
+If programme data is loaded, generate radar with:
+
+Weekly load balance
+
+Stage-level appropriateness
+
+Equity impact
+
+Staff workload feasibility
+
+Modality consistency
+
+6. UI INTERACTIONS (MATCH EXISTING TOOLS)
+Must include:
+
+Accordion-style sections (same as Assessment Mapping)
+
+Instant visualisation updates
+
+Summary card at bottom
+
+Export buttons:
+
+PDF
+
+PNG images of charts
+
+CSV export of input values
+
+Behaviour:
+
+Changes in any input instantly update:
+
+Radar
+
+Heatmap
+
+Weekly pattern
+
+Modality recommendations
+
+No page reloads.
+
+7. COLLEGIAL WORKFLOW (NO APPROVAL CHAIN)
+Must include:
+
+Shared view mode (no submissions or approvals)
+
+All module leads and programme chairs see the same dashboard
+
+Each module can be edited by either role (matching Pathways Tool logic)
+
+No “locked” state
+
+No hierarchical permissions
+
+8. FINAL SUMMARY CARD (END OF PAGE)
+
+Mirroring Assessment Mapping + Pathways Summary.
+
+Must include:
+
+✔ Recommended modality
+
+Based on highest score.
+If HyFlex is not feasible → show caution note.
+
+✔ Three strongest factors
+
+Auto-generated text.
+
+✔ Three risks / considerations
+
+Auto-generated.
+
+✔ Deviations from default
+
+10–30 word summary.
+
+✔ Weekly summary
+
+One-line card.
+
+✔ Download “Modality Rationale PDF”
+
+Same format as Assessment Mapping export.
+
+9. ACCESSIBILITY & BRANDING REQUIREMENTS
+
+Must match your existing tools:
+
+TU Dublin colour palette
+
+High-contrast chart modes
+
+Alt text for all visuals
+
+Keyboard navigation
+
+ARIA tags
+
+Responsive design for PC + tablet
+
+10. INTEGRATION REQUIREMENTS
+
+Tool must:
+
+Share visual style with Assessment Mapping + Pathways
+
+Use same CSS framework
+
+Use same Save/Load JSON structure
+
+Sit inside the Curriculum Insight Suite navigation
+
+🎉 END OF FULL REPLIT AGENT INSTRUCTIONS
+
+These instructions are now complete, coherent, and tailored to:
+
+your existing assessment and pathways tools
+
+your SUITE branding
+
+your COLLEGIAL workflow model
+
+the FOUR approved TU Dublin modalities
+
+DELTA-aligned evidence-based modality decisions
