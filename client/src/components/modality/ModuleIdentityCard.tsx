@@ -12,9 +12,12 @@ interface Props {
 
 export function ModuleIdentityCard({ state, onChange }: Props) {
   return (
-    <Card className="border-t-4 border-t-primary shadow-md">
-      <CardHeader className="bg-muted/20 pb-3">
-        <CardTitle className="text-lg font-bold text-primary uppercase tracking-wide">Panel A: Module Identity</CardTitle>
+    <Card className="border-t-4 border-t-primary shadow-md overflow-hidden">
+      <CardHeader className="bg-slate-50 pb-3 border-b">
+        <CardTitle className="text-lg font-bold text-primary uppercase tracking-wide flex items-center justify-between">
+          <span>Panel A: Module Identity</span>
+          <span className="text-xs font-normal bg-primary/10 px-2 py-1 rounded text-primary">Overview</span>
+        </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-4 pt-4">
         <div className="grid gap-2">
@@ -24,6 +27,7 @@ export function ModuleIdentityCard({ state, onChange }: Props) {
             value={state.moduleName} 
             onChange={(e) => onChange({ moduleName: e.target.value })} 
             placeholder="e.g. Advanced Data Structures"
+            className="font-medium"
           />
         </div>
 
