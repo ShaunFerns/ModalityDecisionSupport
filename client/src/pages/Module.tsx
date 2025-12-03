@@ -407,6 +407,61 @@ export default function Module() {
             </Collapsible>
           </section>
 
+          {/* Debug Panel (Temporary) */}
+          <section>
+            <Collapsible className="border rounded-md bg-slate-50 shadow-sm border-dashed border-slate-300">
+              <CollapsibleTrigger className="flex items-center justify-between w-full p-4 text-sm font-bold text-slate-700 hover:bg-slate-100">
+                <div className="text-left">
+                   <div>Debug: score breakdown (temporary)</div>
+                   <div className="text-xs font-normal text-muted-foreground">For diagnostic use when calibrating the scoring model. Not visible in final user version.</div>
+                </div>
+                <ChevronDown className="h-4 w-4" />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="p-4 pt-0 text-xs space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-200 pt-4">
+                   
+                   {/* Helper to render table */}
+                   {['inPerson', 'blended', 'online', 'hyflex'].map((modality) => (
+                     <div key={modality} className="border rounded bg-white p-2">
+                        <h4 className="font-bold capitalize mb-2 border-b pb-1">{modality.replace(/([A-Z])/g, ' $1').trim()}</h4>
+                        <table className="w-full text-left">
+                           <thead>
+                             <tr className="text-muted-foreground">
+                               <th className="pb-1 font-medium">Dimension</th>
+                               <th className="pb-1 font-medium text-right">Score</th>
+                             </tr>
+                           </thead>
+                           <tbody className="space-y-1">
+                              <tr>
+                                <td>Learning Design</td>
+                                <td className="text-right">{scores.dimensions.learningDesign[modality as keyof typeof scores.dimensions.learningDesign]}</td>
+                              </tr>
+                              <tr>
+                                <td>Assessment Fit</td>
+                                <td className="text-right">{scores.dimensions.assessment[modality as keyof typeof scores.dimensions.assessment]}</td>
+                              </tr>
+                              <tr>
+                                <td>Learner Profile</td>
+                                <td className="text-right">{scores.dimensions.learnerProfile[modality as keyof typeof scores.dimensions.learnerProfile]}</td>
+                              </tr>
+                              <tr>
+                                <td>Stage Fit</td>
+                                <td className="text-right">{scores.dimensions.stageFit[modality as keyof typeof scores.dimensions.stageFit]}</td>
+                              </tr>
+                              <tr>
+                                <td>Feasibility</td>
+                                <td className="text-right">{scores.dimensions.feasibility[modality as keyof typeof scores.dimensions.feasibility]}</td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </div>
+                   ))}
+
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </section>
+
         </div>
 
       </div>
