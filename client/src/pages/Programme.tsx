@@ -8,12 +8,35 @@ import { CheckCircle, AlertTriangle, ArrowUpRight } from "lucide-react";
 export default function Programme() {
   const [selectedProgramme, setSelectedProgramme] = useState("BSc Computer Science");
 
-  // Mock Data matching Module Page structure
+  // Mock Data for 3 distinct demo modules
   const modules = [
-    { code: "CMPU1010", name: "Advanced Data Structures", stage: "2", credits: 5, modality: "Blended", score: 78, risk: "Low" },
-    { code: "CMPU2020", name: "Web Development", stage: "2", credits: 5, modality: "Online", score: 82, risk: "Medium" },
-    { code: "CMPU3050", name: "Software Engineering", stage: "3", credits: 10, modality: "HyFlex", score: 65, risk: "High" },
-    { code: "MATH1001", name: "Discrete Mathematics", stage: "1", credits: 5, modality: "In-Person", score: 90, risk: "Low" },
+    { 
+      code: "CMPU1001", 
+      name: "Introduction to Programming", 
+      stage: "1", 
+      credits: 5, 
+      modality: "In-Person", 
+      score: 92, 
+      risk: "Low" 
+    },
+    { 
+      code: "CMPU2045", 
+      name: "Cloud Computing Architecture", 
+      stage: "2", 
+      credits: 10, 
+      modality: "Online", 
+      score: 85, 
+      risk: "Low" 
+    },
+    { 
+      code: "CMPU3012", 
+      name: "User Experience Design", 
+      stage: "3", 
+      credits: 5, 
+      modality: "Blended", 
+      score: 78, 
+      risk: "Medium" 
+    }
   ];
 
   return (

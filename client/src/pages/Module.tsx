@@ -116,20 +116,6 @@ export default function Module() {
     ]
   };
 
-  const getAssessmentColor = (type: string, modality: string) => {
-     const weight = state.assessments[type as keyof typeof state.assessments];
-     if (weight === "No") return "bg-gray-100";
-     
-     if (modality === "in-person") {
-        if (type === "exam" || type === "lab") return "bg-green-500 text-white";
-     }
-     if (modality === "online") {
-        if (type === "portfolio") return "bg-green-500 text-white";
-        if (type === "exam" || type === "lab") return "bg-red-300";
-     }
-     return "bg-yellow-200";
-  };
-
   return (
     <Layout>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -358,34 +344,6 @@ export default function Module() {
                     <Radar data={radarData} options={{ maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 100 } } }} />
                  </CardContent>
                </Card>
-
-               {/* Assessment Matrix Heatmap */}
-               <Card className="shadow-sm">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-bold uppercase text-muted-foreground">
-                    Assessment–Modality Matrix
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-5 gap-1 text-xs text-center">
-                    <div className="font-bold text-left pl-2">Type</div>
-                    <div className="font-bold">IP</div>
-                    <div className="font-bold">Blend</div>
-                    <div className="font-bold">Online</div>
-                    <div className="font-bold">HyFlex</div>
-
-                    {Object.keys(state.assessments).map((key) => (
-                      <React.Fragment key={key}>
-                        <div className="text-left pl-2 capitalize py-1 truncate" title={key}>{key}</div>
-                        <div className={`py-1 rounded-sm ${getAssessmentColor(key, 'in-person')}`}></div>
-                        <div className={`py-1 rounded-sm ${getAssessmentColor(key, 'blended')}`}></div>
-                        <div className={`py-1 rounded-sm ${getAssessmentColor(key, 'online')}`}></div>
-                        <div className={`py-1 rounded-sm ${getAssessmentColor(key, 'hyflex')}`}></div>
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
                
              </div>
           </section>

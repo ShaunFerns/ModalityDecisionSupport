@@ -8,9 +8,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
 
   const navItems = [
-    { href: "/programme", label: "Programme", icon: Settings },
     { href: "/module", label: "Modules", icon: BookOpen },
-    { href: "/assessments", label: "Assessments", icon: FileText }, // Added Assessments placeholder
+    { href: "/programme", label: "Programme", icon: Settings },
     { href: "/visualisations", label: "Visualisations", icon: BarChart3 },
   ];
 
