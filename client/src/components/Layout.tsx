@@ -86,11 +86,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <p className="text-sm text-muted-foreground">
             &copy; 2025 Curriculum Insight Suite. All rights reserved.
           </p>
-          <div className="text-sm text-muted-foreground flex gap-4">
-             <span>Evidence-based decision support</span>
-             <span>•</span>
-             <span>Collegial Design</span>
-          </div>
         </div>
       </footer>
     </div>

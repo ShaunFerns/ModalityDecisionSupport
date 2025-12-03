@@ -38,7 +38,7 @@ export interface ModalityState {
     equipment: boolean;
     simulation: boolean;
     remoteFriendly: boolean;
-    staffComfort: boolean; // "Staff capacity = comfortable" rule
+    // staffComfort moved to B5
   };
 
   // B4. Learner Profile
@@ -55,6 +55,7 @@ export interface ModalityState {
   staffProfile: {
     digitalConfidence: "Low" | "Moderate" | "High";
     onlineExperience: "None" | "Some" | "Substantial";
+    hyflexComfort: "Low" | "Moderate" | "High"; // Moved from B3
     accessDevice: boolean;
     accessHyFlexRoom: boolean;
     accessDigitalTools: boolean;
@@ -94,7 +95,6 @@ export const initialModalityState: ModalityState = {
     equipment: false,
     simulation: false,
     remoteFriendly: false,
-    staffComfort: true,
   },
   profile: {
     commuter: false,
@@ -107,6 +107,7 @@ export const initialModalityState: ModalityState = {
   staffProfile: {
     digitalConfidence: "Moderate",
     onlineExperience: "Some",
+    hyflexComfort: "Moderate",
     accessDevice: true,
     accessHyFlexRoom: false,
     accessDigitalTools: true,
@@ -185,8 +186,10 @@ export function scoreModality(state: ModalityState): ScoreResult {
   if (state.resources.equipment) { fe.inPerson += 40; fe.online -= 40; fe.hyflex -= 20; }
   if (state.resources.remoteFriendly) { fe.online += 40; fe.blended += 20; fe.hyflex += 20; }
   
-  // HyFlex Feasibility Constraints (Original)
-  if (!state.resources.staffComfort) {
+  // HyFlex Feasibility Constraints (Updated)
+  const staffComfort = state.staffProfile.hyflexComfort === "Moderate" || state.staffProfile.hyflexComfort === "High";
+
+  if (!staffComfort) {
     fe.hyflex = 0; 
   }
 
@@ -249,7 +252,7 @@ export function scoreModality(state: ModalityState): ScoreResult {
   let score_hf = calculateTotal('hyflex');
 
   // Global HyFlex Constraints (Post-calculation overrides)
-  if (!state.resources.staffComfort) score_hf = Math.min(score_hf, 20);
+  if (!staffComfort) score_hf = Math.min(score_hf, 20);
   
   if (!state.profile.lowDigitalAccessRisk) {
      score_on = Math.min(score_on, 40);
@@ -266,14 +269,14 @@ export function scoreModality(state: ModalityState): ScoreResult {
   if (state.activities.labs || state.resources.labRequired) factors.push("Practical/Lab Requirements");
   if (state.profile.stage1Transition) factors.push("First Year Transition Needs");
   if (state.profile.commuter || state.profile.working) factors.push("Flexibility for Commuters/Workers");
-  if (state.resources.staffComfort && score_hf > 50) factors.push("Staff HyFlex Readiness");
+  if (staffComfort && score_hf > 50) factors.push("Staff HyFlex Readiness");
   if (state.activities.project) factors.push("Project-based Learning Suitability");
 
   // Risks
   const risks = [];
   if (state.profile.stage1Transition && score_on > 60) risks.push("High Online risk for Stage 1 students");
   if (!state.profile.lowDigitalAccessRisk && (score_on > 50 || score_hf > 50)) risks.push("Digital Access Equity Risk");
-  if (!state.resources.staffComfort && score_hf > 30) risks.push("Staff not comfortable with HyFlex");
+  if (!staffComfort && score_hf > 30) risks.push("Staff not comfortable with HyFlex");
   if (!state.staffProfile.accessHyFlexRoom && score_hf > 40) risks.push("No dedicated HyFlex room available");
 
   // Recommendation

@@ -3,7 +3,7 @@ import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, AlertTriangle, ArrowUpRight } from "lucide-react";
+import { CheckCircle, AlertTriangle, ArrowUpRight, BarChart3 } from "lucide-react";
 
 export default function Programme() {
   const [selectedProgramme, setSelectedProgramme] = useState("BSc Computer Science");

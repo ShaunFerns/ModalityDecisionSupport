@@ -18,13 +18,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { Download, Save, AlertTriangle, CheckCircle, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
-import {
-  Tooltip as UITooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Download, Save, AlertTriangle, CheckCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 ChartJS.register(
@@ -83,7 +77,8 @@ export default function Module() {
 
   // Radar Data
   const radarData = {
-    labels: ["Learning Design", "Assessment", "Learner Profile", "Stage Fit", "Feasibility"],
+    // Renamed labels to align with Panel B drivers
+    labels: ["Learning Activities", "Assessment Types", "Learner Profile", "Stage Fit", "Resources & Staff"],
     datasets: [
       {
         label: "In-Person",
@@ -172,17 +167,9 @@ export default function Module() {
                   <CardContent className="grid grid-cols-2 gap-2">
                      {Object.entries(state.resources).map(([key, val]) => (
                       <div key={key} className="flex items-center space-x-2">
-                        {key === 'staffComfort' ? (
-                           <div className="col-span-2 flex items-center justify-between w-full bg-muted/30 p-2 rounded mt-2">
-                             <Label htmlFor={`res-${key}`} className="font-medium cursor-pointer">Staff Comfortable with HyFlex?</Label>
-                             <Switch id={`res-${key}`} checked={val} onCheckedChange={(c) => updateResource(key as any, c)} />
-                           </div>
-                        ) : (
-                          <>
-                            <Checkbox id={`res-${key}`} checked={val} onCheckedChange={(c) => updateResource(key as any, c as boolean)} />
-                            <Label htmlFor={`res-${key}`} className="capitalize text-sm font-normal cursor-pointer">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
-                          </>
-                        )}
+                        {/* Removed staffComfort from here */}
+                        <Checkbox id={`res-${key}`} checked={val} onCheckedChange={(c) => updateResource(key as any, c as boolean)} />
+                        <Label htmlFor={`res-${key}`} className="capitalize text-sm font-normal cursor-pointer">{key.replace(/([A-Z])/g, ' $1').trim()}</Label>
                       </div>
                     ))}
                   </CardContent>
@@ -207,16 +194,7 @@ export default function Module() {
                     <CardTitle className="text-sm font-bold flex items-center gap-2">
                       B5. Staff Profile <span className="text-xs font-normal text-muted-foreground bg-gray-100 px-2 py-0.5 rounded-full">Optional</span>
                     </CardTitle>
-                    <TooltipProvider>
-                      <UITooltip>
-                        <TooltipTrigger>
-                          <HelpCircle className="h-4 w-4 text-muted-foreground" />
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-xs">
-                          <p>These items help assess feasibility. They do not evaluate staff performance or influence workload planning.</p>
-                        </TooltipContent>
-                      </UITooltip>
-                    </TooltipProvider>
+                    {/* Removed HelpCircle/Tooltip here */}
                   </CardHeader>
                   <CardContent className="space-y-4">
                     
@@ -243,6 +221,19 @@ export default function Module() {
                           </SelectContent>
                         </Select>
                       </div>
+                    </div>
+                    
+                    {/* Moved Staff HyFlex Comfort Here */}
+                    <div className="space-y-2">
+                       <Label htmlFor="hyflexComfort" className="text-xs font-medium">Staff Comfortable with HyFlex?</Label>
+                       <Select value={state.staffProfile.hyflexComfort} onValueChange={(v) => updateStaffProfile('hyflexComfort', v)}>
+                          <SelectTrigger id="hyflexComfort"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Low">Low</SelectItem>
+                            <SelectItem value="Moderate">Moderate</SelectItem>
+                            <SelectItem value="High">High</SelectItem>
+                          </SelectContent>
+                       </Select>
                     </div>
 
                     <div className="space-y-2">
@@ -380,7 +371,7 @@ export default function Module() {
                 </div>
                 <div>
                   <strong className="block text-gray-700">Staff Profile</strong>
-                  Conf: {state.staffProfile.digitalConfidence}, Exp: {state.staffProfile.onlineExperience}, Work: {state.staffProfile.workload}
+                  Conf: {state.staffProfile.digitalConfidence}, Exp: {state.staffProfile.onlineExperience}, HyFlex: {state.staffProfile.hyflexComfort}
                 </div>
               </CollapsibleContent>
             </Collapsible>

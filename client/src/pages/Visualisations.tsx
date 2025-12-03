@@ -35,14 +35,15 @@ export default function Visualisations() {
     stage: "4",
     activities: { ...initialModalityState.activities, project: true, discussion: true, workshops: true },
     assessments: { ...initialModalityState.assessments, authentic: "Major", presentation: "Minor" },
-    resources: { ...initialModalityState.resources, staffComfort: true, remoteFriendly: true },
-    profile: { ...initialModalityState.profile, working: true, digitalConfidence: true }
+    resources: { ...initialModalityState.resources, remoteFriendly: true },
+    profile: { ...initialModalityState.profile, working: true, digitalConfidence: true },
+    staffProfile: { ...initialModalityState.staffProfile, hyflexComfort: "High" } // Updated for new interface
   };
   
   const scores = scoreModality(demoState);
 
   const radarData = {
-    labels: ["Learning Design", "Assessment", "Learner Profile", "Stage Fit", "Feasibility"],
+    labels: ["Learning Activities", "Assessment Types", "Learner Profile", "Stage Fit", "Resources & Staff"],
     datasets: [
       {
         label: "In-Person",
