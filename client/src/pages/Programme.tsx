@@ -39,10 +39,23 @@ export default function Programme() {
     setModules(modules.filter(m => m.id !== id));
   };
 
+  const handleNewProgramme = () => {
+    setProgrammeName("");
+    setProgrammeCode("");
+    setModules([]);
+    setNewModuleCode("");
+    setNewModuleName("");
+  };
+
   return (
     <Layout>
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-        <h1 className="text-3xl font-bold text-primary">Programme Details</h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-primary">Programme Details</h1>
+          <Button onClick={handleNewProgramme} variant="outline" className="gap-2">
+            <Plus className="w-4 h-4" /> New Programme
+          </Button>
+        </div>
         
         {/* Programme Details Card */}
         <Card>
