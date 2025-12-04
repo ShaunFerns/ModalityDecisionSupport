@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ModalityState, initialModalityState, scoreModality } from "@/lib/scoring";
@@ -12,7 +12,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { BarChart3, ArrowRight, CheckCircle, AlertTriangle, ArrowUpRight } from "lucide-react";
+import { BarChart3, ArrowRight, CheckCircle, AlertTriangle, ArrowUpRight, Download } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -37,7 +37,8 @@ interface VisModule {
 }
 
 export default function Visualisations() {
-  const [selectedProgramme, setSelectedProgramme] = useState("BSc Computer Science");
+  const [selectedProgramme, setSelectedProgramme] = useState("ALL");
+  const radarChartRef = useRef<any>(null);
   
   // State for displayed modules based on selection
   const [displayedModules, setDisplayedModules] = useState<VisModule[]>([]);
@@ -62,10 +63,23 @@ export default function Visualisations() {
 
   // Update data when selection changes
   useEffect(() => {
-    if (programmeData[selectedProgramme]) {
+    if (selectedProgramme === "ALL") {
+        const allModules = Object.values(programmeData).flat();
+        setDisplayedModules(allModules);
+    } else if (programmeData[selectedProgramme]) {
       setDisplayedModules(programmeData[selectedProgramme]);
     }
   }, [selectedProgramme]);
+
+  // Function to download chart as PNG
+  const downloadChart = () => {
+    if (radarChartRef.current) {
+      const link = document.createElement('a');
+      link.download = 'modality-radar-chart.png';
+      link.href = radarChartRef.current.toBase64Image();
+      link.click();
+    }
+  };
 
   // Using initial state as example/demo for the visualization page
   const demoState: ModalityState = {
@@ -148,6 +162,7 @@ export default function Visualisations() {
                   <SelectValue placeholder="Select Programme" />
                 </SelectTrigger>
                 <SelectContent>
+                  <SelectItem value="ALL">All Programmes</SelectItem>
                   <SelectItem value="BSc Computer Science">BSc Computer Science</SelectItem>
                   <SelectItem value="BA Digital Media">BA Digital Media</SelectItem>
                   <SelectItem value="MSc Data Analytics">MSc Data Analytics</SelectItem>
@@ -257,27 +272,17 @@ export default function Visualisations() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
              
              {/* Radar Chart Demo */}
-             <Card className="shadow-md">
-                <CardHeader>
+             <Card className="shadow-md lg:col-span-2">
+                <CardHeader className="flex flex-row items-center justify-between">
                    <CardTitle className="text-lg font-bold text-primary">Multi-Dimensional Fit Analysis</CardTitle>
+                   <Button variant="outline" size="sm" onClick={downloadChart} className="gap-2">
+                     <Download className="w-4 h-4" /> Download PNG
+                   </Button>
                 </CardHeader>
-                <CardContent className="h-[400px] flex items-center justify-center p-4">
-                   <Radar data={radarData} options={{ maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 100 } } }} />
+                <CardContent className="h-[500px] flex items-center justify-center p-4">
+                   <Radar ref={radarChartRef} data={radarData} options={{ maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 100 } } }} />
                 </CardContent>
              </Card>
-
-             {/* Placeholder for future visualisations (Heatmap removed) */}
-             <div className="space-y-6">
-                <Card className="bg-primary text-white h-full">
-                   <CardContent className="p-8 flex flex-col items-center justify-center text-center space-y-4 h-full">
-                      <BarChart3 className="h-12 w-12 text-secondary" />
-                      <h3 className="text-xl font-bold">More Visualisations Coming Soon</h3>
-                      <p className="text-blue-100 max-w-md">
-                         Future updates will include Programme Coherence Radar, Student Workload Heatmaps, and Comparative Modality Analysis.
-                      </p>
-                   </CardContent>
-                </Card>
-             </div>
 
           </div>
         </div>
