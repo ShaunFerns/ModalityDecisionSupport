@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Save } from "lucide-react";
+import { Plus, Trash2, Save, ArrowRight } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Link } from "wouter";
 
 // Mock data for initial state
 const initialModules = [
@@ -146,6 +147,14 @@ export default function Programme() {
 
           </CardContent>
         </Card>
+
+        {/* Save and Continue Button */}
+        <div className="flex justify-end pt-4 border-t">
+           <Link href="/module">
+             <Button size="lg" className="gap-2">Save and Continue to Modules <ArrowRight className="w-4 h-4" /></Button>
+           </Link>
+        </div>
+
       </div>
     </Layout>
   );
