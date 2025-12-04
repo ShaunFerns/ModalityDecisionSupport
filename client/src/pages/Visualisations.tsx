@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ModalityState, initialModalityState, scoreModality } from "@/lib/scoring";
@@ -26,39 +26,46 @@ ChartJS.register(
   Legend
 );
 
+interface VisModule {
+  code: string;
+  name: string;
+  stage: string;
+  credits: number;
+  modality: string;
+  score: number;
+  risk: string;
+}
+
 export default function Visualisations() {
   const [selectedProgramme, setSelectedProgramme] = useState("BSc Computer Science");
+  
+  // State for displayed modules based on selection
+  const [displayedModules, setDisplayedModules] = useState<VisModule[]>([]);
 
-  // Mock Data for 3 distinct demo modules (Moved from old Programme page)
-  const modules = [
-    { 
-      code: "CMPU1001", 
-      name: "Introduction to Programming", 
-      stage: "1", 
-      credits: 5, 
-      modality: "In-Person", 
-      score: 92, 
-      risk: "Low" 
-    },
-    { 
-      code: "CMPU2045", 
-      name: "Cloud Computing Architecture", 
-      stage: "2", 
-      credits: 10, 
-      modality: "Online", 
-      score: 85, 
-      risk: "Low" 
-    },
-    { 
-      code: "CMPU3012", 
-      name: "User Experience Design", 
-      stage: "3", 
-      credits: 5, 
-      modality: "Blended", 
-      score: 78, 
-      risk: "Medium" 
+  // Mock Data Store
+  const programmeData: Record<string, VisModule[]> = {
+    "BSc Computer Science": [
+      { code: "CMPU1001", name: "Introduction to Programming", stage: "1", credits: 5, modality: "In-Person", score: 92, risk: "Low" },
+      { code: "CMPU2045", name: "Cloud Computing Architecture", stage: "2", credits: 10, modality: "Online", score: 85, risk: "Low" },
+      { code: "CMPU3012", name: "User Experience Design", stage: "3", credits: 5, modality: "Blended", score: 78, risk: "Medium" }
+    ],
+    "BA Digital Media": [
+      { code: "DIGM1001", name: "Digital Storytelling", stage: "1", credits: 5, modality: "Blended", score: 88, risk: "Low" },
+      { code: "DIGM2010", name: "Video Production", stage: "2", credits: 10, modality: "In-Person", score: 95, risk: "Low" },
+      { code: "DIGM3005", name: "Web Aesthetics", stage: "3", credits: 5, modality: "Online", score: 82, risk: "Low" }
+    ],
+    "MSc Data Analytics": [
+      { code: "DATA9001", name: "Machine Learning", stage: "1", credits: 10, modality: "HyFlex", score: 75, risk: "Medium" },
+      { code: "DATA9002", name: "Big Data Architecture", stage: "1", credits: 10, modality: "Online", score: 90, risk: "Low" }
+    ]
+  };
+
+  // Update data when selection changes
+  useEffect(() => {
+    if (programmeData[selectedProgramme]) {
+      setDisplayedModules(programmeData[selectedProgramme]);
     }
-  ];
+  }, [selectedProgramme]);
 
   // Using initial state as example/demo for the visualization page
   const demoState: ModalityState = {
@@ -109,6 +116,21 @@ export default function Visualisations() {
     ]
   };
 
+  // Calculate KPIs based on displayed modules
+  const totalModules = displayedModules.length;
+  const highRiskModules = displayedModules.filter(m => m.risk === 'High' || m.risk === 'Medium').length; // Counting Medium as risk for demo
+  
+  // Determine dominant modality
+  const modalityCounts = displayedModules.reduce((acc, m) => {
+    acc[m.modality] = (acc[m.modality] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+  
+  // Sort to find dominant - handle empty array case
+  const sortedModalities = Object.entries(modalityCounts).sort((a, b) => b[1] - a[1]);
+  const dominantModality = sortedModalities.length > 0 ? sortedModalities[0][0] : "N/A";
+  const dominantPercentage = totalModules > 0 ? Math.round((modalityCounts[dominantModality] / totalModules) * 100) : 0;
+
   return (
     <Layout>
        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
@@ -140,21 +162,21 @@ export default function Visualisations() {
             <Card className="border-t-4 border-t-primary shadow-sm">
               <CardContent className="p-6">
                 <div className="text-sm font-medium text-muted-foreground uppercase">Total Modules</div>
-                <div className="text-3xl font-bold text-primary mt-2">12</div>
+                <div className="text-3xl font-bold text-primary mt-2">{totalModules}</div>
                 <div className="text-xs text-green-600 mt-1 flex items-center"><CheckCircle className="w-3 h-3 mr-1" /> All defined</div>
               </CardContent>
             </Card>
             <Card className="border-t-4 border-t-secondary shadow-sm">
               <CardContent className="p-6">
                 <div className="text-sm font-medium text-muted-foreground uppercase">Dominant Modality</div>
-                <div className="text-3xl font-bold text-secondary mt-2">Blended</div>
-                <div className="text-xs text-muted-foreground mt-1">45% of modules</div>
+                <div className="text-3xl font-bold text-secondary mt-2">{dominantModality}</div>
+                <div className="text-xs text-muted-foreground mt-1">{dominantPercentage}% of modules</div>
               </CardContent>
             </Card>
             <Card className="border-t-4 border-t-yellow-500 shadow-sm">
               <CardContent className="p-6">
-                <div className="text-sm font-medium text-muted-foreground uppercase">High Risk Modules</div>
-                <div className="text-3xl font-bold text-yellow-600 mt-2">2</div>
+                <div className="text-sm font-medium text-muted-foreground uppercase">Risk Review</div>
+                <div className="text-3xl font-bold text-yellow-600 mt-2">{highRiskModules}</div>
                 <div className="text-xs text-yellow-600 mt-1 flex items-center"><AlertTriangle className="w-3 h-3 mr-1" /> Review required</div>
               </CardContent>
             </Card>
@@ -188,7 +210,7 @@ export default function Visualisations() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {modules.map((m, i) => (
+                    {displayedModules.map((m, i) => (
                       <tr key={i} className="hover:bg-gray-50/50 transition-colors">
                         <td className="px-6 py-4 font-medium text-gray-900">{m.code}</td>
                         <td className="px-6 py-4 text-gray-600">{m.name}</td>
@@ -244,41 +266,10 @@ export default function Visualisations() {
                 </CardContent>
              </Card>
 
-             {/* Heatmap Placeholder / Explanation */}
+             {/* Placeholder for future visualisations (Heatmap removed) */}
              <div className="space-y-6">
-                <Card className="shadow-md">
-                  <CardHeader>
-                    <CardTitle className="text-lg font-bold text-primary">Assessment-Modality Heatmap</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <p className="text-sm text-muted-foreground">
-                        This visualization (available on individual module pages) maps assessment types against optimal modalities.
-                        Green indicates strong alignment, while Red indicates potential risks or mismatch.
-                      </p>
-                      <div className="grid grid-cols-5 gap-1 text-xs text-center opacity-80">
-                         <div className="font-bold text-left pl-2">Type</div>
-                         <div className="font-bold">IP</div>
-                         <div className="font-bold">Blend</div>
-                         <div className="font-bold">Online</div>
-                         <div className="font-bold">HyFlex</div>
-                         
-                         {['Exam', 'Lab', 'Portfolio', 'Group Project'].map((k) => (
-                           <React.Fragment key={k}>
-                             <div className="text-left pl-2 py-2">{k}</div>
-                             <div className="bg-green-500/20 m-1 rounded"></div>
-                             <div className="bg-blue-500/20 m-1 rounded"></div>
-                             <div className="bg-yellow-500/20 m-1 rounded"></div>
-                             <div className="bg-red-500/20 m-1 rounded"></div>
-                           </React.Fragment>
-                         ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-primary text-white">
-                   <CardContent className="p-8 flex flex-col items-center text-center space-y-4">
+                <Card className="bg-primary text-white h-full">
+                   <CardContent className="p-8 flex flex-col items-center justify-center text-center space-y-4 h-full">
                       <BarChart3 className="h-12 w-12 text-secondary" />
                       <h3 className="text-xl font-bold">More Visualisations Coming Soon</h3>
                       <p className="text-blue-100 max-w-md">
