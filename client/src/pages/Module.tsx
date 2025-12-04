@@ -20,6 +20,7 @@ import {
 } from "chart.js";
 import { Download, Save, AlertTriangle, CheckCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Link } from "wouter";
 
 ChartJS.register(
   RadialLinearScale,
@@ -320,7 +321,9 @@ export default function Module() {
                  <CardHeader className="pb-2">
                    <div className="flex items-center justify-between">
                       <CardTitle className="text-lg font-bold uppercase text-muted-foreground">Recommended</CardTitle>
-                      <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded-full">Evidence-Based</span>
+                      <Link href="/evidence">
+                        <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded-full cursor-pointer hover:bg-green-200 transition-colors">Evidence-Based</span>
+                      </Link>
                    </div>
                  </CardHeader>
                  <CardContent>

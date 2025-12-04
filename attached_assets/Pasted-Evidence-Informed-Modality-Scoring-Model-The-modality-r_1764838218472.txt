@@ -1,0 +1,60 @@
+Evidence-Informed Modality Scoring Model
+The modality recommendation is generated through an evidence-informed scoring model that synthesises international literature on learning design, assessment alignment, learner flexibility, digital pedagogy, and feasibility in higher education. The model draws on established principles from:
+•	Constructive Alignment (Biggs & Tang, 2011), where learning activities and assessments must align with intended learning outcomes.
+•	Blended and Online Learning Frameworks, including Graham (2013), Means et al. (2014), and Garrison & Vaughan’s (2008) Community of Inquiry model.
+•	Universal Design for Learning (CAST, 2018), particularly learner variability and multiple means of engagement.
+•	Digital Competence Frameworks, including DigCompEdu (Redecker, 2017) and national digital capacity principles.
+•	Flexibility and Modality Choice Literature, including Beatty’s (2019) HyFlex model and Chickering & Gamson’s (1987) principles of good practice in undergraduate education.
+Taken together, this evidence indicates that suitable modality depends on five interacting dimensions:
+1.	Learning Design,
+2.	Assessment Fit,
+3.	Learner Profile & Equity,
+4.	Stage Fit,
+5.	Feasibility (Resources & Staff Readiness).
+How the Model Works
+For each modality (In-Person, Blended, Online, HyFlex), the system calculates a score (0–100) within each dimension:
+1.	Learning Design
+Derived from core learning activities (e.g., knowledge acquisition, inquiry, labs, discussion, reflection, projects). Activities associated with flexibility or independent study provide higher alignment with Online or Blended learning, while practical, hands-on activities increase alignment with In-Person and HyFlex delivery.
+References: Biggs & Tang (2011); Garrison & Vaughan (2008); Graham (2013).
+2.	Assessment Fit
+Alignment between the assessment types (exam, authentic CA, group work, portfolio, practical) and delivery modality. For example, portfolio and reflective assessments have strong alignment with online delivery, while practical/lab assessments align more closely with In-Person or HyFlex modalities.
+References: Nicol & Macfarlane-Dick (2006); Evans (2013); Redecker (2017).
+3.	Learner Profile & Equity
+Factors such as commuter patterns, digital access, working learners, and transition-stage support influence flexibility needs. Programmes with high proportions of commuters or working learners often benefit from blended or online elements, while Stage 1 learners typically benefit from stronger structure and community.
+References: CAST (2018); JISC (2020) Learner Digital Experience; Thomas (2012) on belonging.
+4.	Stage Fit
+Different stages of the programme have different modality implications. Early stages emphasise structure and belonging, while later stages often emphasise autonomy, flexibility, and independent learning.
+References: Tinto (2017); Thomas (2012); Biggs & Tang (2011).
+5.	Feasibility (Resources & Staff Profile)
+Practical constraints and supports—such as lab requirements, access to specialist spaces, staff digital confidence, online teaching experience, and availability of HyFlex-enabled rooms—affect the real-world viability of each modality.
+References: Beatty (2019); Redecker (2017); JISC (2020).
+Each dimension contributes to the overall modality score using weighted constructive alignment logic:
+•	Learning Design (40%)
+•	Assessment Fit (20%)
+•	Learner Profile & Equity (20%)
+•	Stage Fit (10%)
+•	Feasibility (10%)
+The modality with the highest combined score is presented as the evidence-based recommendation.
+What the Score Represents
+The recommendation does not imply that other modalities are unsuitable. Rather, it identifies the modality with the strongest alignment given the module’s:
+•	pedagogical intent,
+•	assessment structure,
+•	learner needs,
+•	programme stage, and
+•	practical delivery constraints.
+This approach ensures transparency, promotes consistency across modules, and supports programme teams in making informed, learner-centred, and feasible decisions about delivery.
+Reference List
+Beatty, B. J. (2019). Hybrid-Flexible course design: Implementing student-directed hybrid classes. EdTech Books. https://edtechbooks.org/hyflex
+Biggs, J., & Tang, C. (2011). Teaching for quality learning at university (4th ed.). Open University Press.
+CAST. (2018). Universal Design for Learning guidelines version 2.2. CAST. https://udlguidelines.cast.org/
+Chickering, A. W., & Gamson, Z. F. (1987). Seven principles for good practice in undergraduate education. AAHE Bulletin, 39(7), 3–7.
+Evans, C. (2013). Making sense of assessment feedback in higher education. Review of Educational Research, 83(1), 70–120. https://doi.org/10.3102/0034654312474350
+Garrison, D. R., & Vaughan, N. D. (2008). Blended learning in higher education: Framework, principles, and guidelines. Jossey-Bass.
+Graham, C. R. (2013). Emerging practice and research in blended learning. In M. G. Moore (Ed.), Handbook of distance education (3rd ed., pp. 333–350). Routledge.
+JISC. (2020). Student digital experience insights survey 2020: Findings from UK higher education. JISC. https://www.jisc.ac.uk/
+Means, B., Toyama, Y., Murphy, R., & Baki, M. (2013). The effectiveness of online and blended learning: A meta-analysis of the empirical literature. Teachers College Record, 115(3), 1–47.
+Nicol, D., & Macfarlane‐Dick, D. (2006). Formative assessment and self‐regulated learning: A model and seven principles of good feedback practice. Studies in Higher Education, 31(2), 199–218. https://doi.org/10.1080/03075070600572090
+Redecker, C. (2017). European framework for the digital competence of educators: DigCompEdu. Publications Office of the European Union. https://doi.org/10.2760/159770
+Thomas, L. (2012). Building student engagement and belonging in higher education at a time of change. Paul Hamlyn Foundation.
+Tinto, V. (2017). Reflections on student persistence. Student Success, 8(2), 1–8. https://doi.org/10.5204/ssj.v8i2.376
+
