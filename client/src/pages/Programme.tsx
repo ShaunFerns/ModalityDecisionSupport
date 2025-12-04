@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Save, ArrowRight, ChevronLeft } from "lucide-react";
+import { Plus, Trash2, Save, ArrowRight } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Link, useLocation } from "wouter";
-import { useToast } from "@/hooks/use-toast";
+import { Link } from "wouter";
 
 // Mock data for initial state
 const initialModules = [
@@ -17,26 +16,11 @@ const initialModules = [
 ];
 
 export default function Programme() {
-  const [location] = useLocation();
-  const { toast } = useToast();
-  
-  // Simple way to check query params since wouter useLocation doesn't parse them
-  const isNewMode = typeof window !== 'undefined' && window.location.search.includes('mode=new');
-
   const [programmeName, setProgrammeName] = useState("BSc Computer Science");
   const [programmeCode, setProgrammeCode] = useState("TU856");
   const [modules, setModules] = useState(initialModules);
   const [newModuleCode, setNewModuleCode] = useState("");
   const [newModuleName, setNewModuleName] = useState("");
-
-  // Reset state if in new mode
-  useEffect(() => {
-    if (isNewMode) {
-      setProgrammeName("");
-      setProgrammeCode("");
-      setModules([]);
-    }
-  }, [isNewMode]);
 
   const handleAddModule = () => {
     if (newModuleCode && newModuleName) {
@@ -55,29 +39,10 @@ export default function Programme() {
     setModules(modules.filter(m => m.id !== id));
   };
 
-  const handleSave = () => {
-    toast({
-      title: "Programme Saved",
-      description: `${programmeName} (${programmeCode}) has been saved successfully.`,
-    });
-  };
-
   return (
     <Layout>
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Link href="/">
-              <Button variant="ghost" size="sm" className="gap-1 pl-0 hover:pl-2 transition-all">
-                <ChevronLeft className="h-4 w-4" /> Back to Dashboard
-              </Button>
-            </Link>
-            <h1 className="text-3xl font-bold text-primary">
-              {isNewMode ? "Create New Programme" : "Edit Programme Details"}
-            </h1>
-          </div>
-        </div>
+        <h1 className="text-3xl font-bold text-primary">Programme Details</h1>
         
         {/* Programme Details Card */}
         <Card>
@@ -92,7 +57,6 @@ export default function Programme() {
                   id="progName" 
                   value={programmeName} 
                   onChange={(e) => setProgrammeName(e.target.value)} 
-                  placeholder="e.g. BSc Computer Science"
                 />
               </div>
               <div className="space-y-2">
@@ -101,12 +65,11 @@ export default function Programme() {
                   id="progCode" 
                   value={programmeCode} 
                   onChange={(e) => setProgrammeCode(e.target.value)} 
-                  placeholder="e.g. TU856"
                 />
               </div>
             </div>
             <div className="flex justify-end">
-                <Button className="gap-2" onClick={handleSave}><Save className="w-4 h-4" /> Save Programme</Button>
+                <Button className="gap-2"><Save className="w-4 h-4" /> Save Programme</Button>
             </div>
           </CardContent>
         </Card>
